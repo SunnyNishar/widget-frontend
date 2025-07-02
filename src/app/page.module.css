@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+.sidebar {
+  width: 300px;
+  background: #333;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.active {
+  background: #444;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #ffffff;
+}
+
+.content h1 {
+  font-size: 28px;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.content p {
+  color: #000000;
+}
+
+.content h2 {
+  font-size: 20px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.steps p {
+  margin: 8px 0;
+}
+
+.formBox {
+  margin: 20px 0;
+}
+
+.formBox input,
+.formBox select,
+.widgetName {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+.buttons button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+

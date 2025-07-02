@@ -1,0 +1,22 @@
+.viewicons {
+  display: flex;
+  gap: 8px;
+}
+
+.viewicons button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.viewicons button:hover {
+  opacity: 0.75;
+}
+
+.viewicons button.active {
+  opacity: 1;
+  border-bottom: 2px solid blue;
+}
