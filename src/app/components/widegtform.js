@@ -1,9 +1,9 @@
-'use client';
-import React, { useState } from 'react';
-import styles from './widgetform.module.css';
-import Image from 'next/image';
-import Buttons from './buttons';
-import { useEffect } from 'react';
+"use client";
+import React, { useState } from "react";
+import styles from "./widgetform.module.css";
+import Image from "next/image";
+import Buttons from "./buttons";
+import { useEffect } from "react";
 import preview1 from "@/assets/card1.webp";
 import preview2 from "@/assets/card2.webp";
 import preview3 from "@/assets/card3.webp";
@@ -11,37 +11,52 @@ import preview4 from "@/assets/card4.webp";
 import preview5 from "@/assets/card5.webp";
 import preview6 from "@/assets/card6.webp";
 import preview7 from "@/assets/card7.webp";
-import WidgetCustomizer from './WidgetCustomizer';
+import WidgetCustomizer from "./WidgetCustomizer";
 
-export default function WidgetForm({ selectedFolderId, setSelectedFolderId }) {
+export default function WidgetForm({
+  selectedFolderId,
+  setSelectedFolderId,
+  view,
+  setView,
+  selectedLayout,
+  setSelectedLayout,
+  onSettingsChange,
+}) {
   const [folders, setFolders] = useState([]);
+
+  // const [selectedlayout, setSelectedLayout] = useState("");
   // const [selectedFolderId, setSelectedFolderId] = useState('');
   // const [selectedFeedUrl, setSelectedFeedUrl] = useState('');
 
-  const [view, setView] = useState('grid');
+  // const [view, setView] = useState("grid");
   // const [selectedPreview, setSelectedPreview] = useState(null);
 
   useEffect(() => {
-  fetch('http://localhost/backend/getFolders.php')
-    .then(res => res.json())
-    .then(data => setFolders(data))
-    .catch(err => console.error('Failed to fetch folders:', err));
-}, []);
-const previewMap = {
-  list: [preview3],
-  matrix: [preview4, preview5],
-  card: [preview6, preview7],
-  grid: [preview1, preview2], // Default
-};
+    fetch("http://localhost/backend/getFolders.php")
+      .then((res) => res.json())
+      .then((data) => setFolders(data))
+      .catch((err) => console.error("Failed to fetch folders:", err));
+  }, []);
+  const previewMap = {
+    list: [preview3],
+    matrix: [preview4, preview5],
+    card: [preview6, preview7],
+    grid: [preview1, preview2], // Default
+  };
 
-const renderPreviews = () => {
-  const previews = previewMap[view] || previewMap.grid;
+  const renderPreviews = () => {
+    const previews = previewMap[view];
 
-  return (
-    <>
-      {previews.map((imgSrc, idx) => (
-        <div className={styles.preview2} key={idx}>
-          <button>
+    return previews.map((imgSrc, idx) => {
+      const layoutName = `${view}${idx + 1}`;
+      const isSelected = selectedLayout === layoutName;
+
+      return (
+        <div
+          className={`${styles.preview2} ${isSelected ? styles.selected : ""}`}
+          key={idx}
+        >
+          <button onClick={() => setSelectedLayout(layoutName)}>
             <Image
               src={imgSrc}
               width={250}
@@ -50,71 +65,9 @@ const renderPreviews = () => {
             />
           </button>
         </div>
-      ))}
-    </>
-  );
-};
-
-  // const renderPreviews = () => {
-  //   switch (view) {
-  //     case 'list':
-  //       return (
-  //         <div className={styles.preview2}>
-  //           <button>
-  //             <Image src={preview3} width={250} height={300} objectFit='contain' alt="List Preview" />
-  //           </button>
-  //         </div>
-  //       );
-  //     case 'matrix':
-  //       return (
-  //         <>
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview4} width={250} height={300} alt="Matrix 1" />
-  //             </button>
-  //           </div>
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview5} width={250} height={300} alt="Matrix 2" />
-  //             </button>
-  //           </div>
-  //         </>
-  //       );
-  //     case 'card':
-  //       return (
-  //         <>
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview6} width={250} height={300} alt="Matrix 1" />
-  //             </button>
-  //           </div>
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview7} width={250} height={300} alt="Matrix 2" />
-  //             </button>
-  //           </div>
-  //         </>
-  //       );
-  //     case 'grid':
-  //     default:
-  //       return (
-  //         <>
-  //         {/* <div className={styles.mainPreview}> */}
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview1} width={250} height={300} alt="Grid 1" />
-  //             </button>
-  //           </div>
-  //           <div className={styles.preview2}>
-  //             <button>
-  //               <Image src={preview2} width={250} height={300} alt="Grid 2" />
-  //             </button>
-  //           </div>
-  //           {/* </div> */}
-  //         </>
-  //       );
-  //   }
-  // };
+      );
+    });
+  };
 
   return (
     <div className={styles.maindiv}>
@@ -126,16 +79,19 @@ const renderPreviews = () => {
         <input type="text" defaultValue={"http://rss.feedspot.com/..."} />
         <br />
         <p>Or Select Feedspot Folder URL</p>
-        <select value={selectedFolderId} onChange={(e) => {
-  setSelectedFolderId(e.target.value);
-}}>
-  <option value="">-- Select a Folder --</option>
-  {folders.map(folder => (
-    <option key={folder.id} value={folder.id}>
-      {folder.name}
-    </option>
-  ))}
-</select>
+        <select
+          value={selectedFolderId}
+          onChange={(e) => {
+            setSelectedFolderId(e.target.value);
+          }}
+        >
+          <option value="">-- Select a Folder --</option>
+          {folders.map((folder) => (
+            <option key={folder.id} value={folder.id}>
+              {folder.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.heading}>
@@ -143,10 +99,8 @@ const renderPreviews = () => {
         <Buttons setView={setView} currentView={view} />
       </div>
 
-      <div className={styles.preview}>
-        {renderPreviews()}
-      </div>
-      <WidgetCustomizer />
+      <div className={styles.preview}>{renderPreviews()}</div>
+      <WidgetCustomizer onSettingsChange={onSettingsChange} />
     </div>
   );
 }

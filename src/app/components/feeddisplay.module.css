@@ -2,19 +2,18 @@
 
 .container {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   padding: 1rem;
   background-color: #ffffff;
   color: #558cba;
 }
-.feeddata{
-  /* margin: 1rem; */
+/* .feeddata{
   padding: 2vh;
   max-height: 50vh;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #558cba #f0f0f0;
-}
+} */
 .heading{
     margin:0;
     padding: 2vh;
@@ -32,15 +31,14 @@
   color: #558cba;
 }
 
-.feedItem {
+/* .feedItem {
   border: 1px solid #000000;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   padding: 1rem;
-  /* margin-top: 1rem; */
   margin-bottom: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
+} */
 
 .feedItem img {
   width: 100%;
@@ -54,7 +52,7 @@
   font-size: 1.1rem;
   margin-bottom: 0.4rem;
   font-weight: bold;
-  color: #333;
+  color: #6d8cd1;
 }
 
 .feedItem p {
@@ -67,3 +65,167 @@
   color: #888;
   font-size: 0.8rem;
 }
+
+.feeddata {
+  margin-top: 10px;
+  max-height: 50vh;
+  overflow-y: hidden;
+  scrollbar-width:thin;
+  scrollbar-color: #558cba #f0f0f0; 
+}
+.feeddata:hover{
+  overflow-y:auto;
+}
+
+/* Feed item
+.feedItem {
+  background: #ffffff;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+} */
+
+.feedImage {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.grid2 {
+    /* display: flex; */
+  /* flex-wrap: wrap; */
+  max-width: 500px;
+  max-width: 500px;
+  gap: 1rem;
+}
+.grid2 .feedItem {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.list1 .feedItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.list1 .feedImage {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.list1 .feedText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.grid1 .feedItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.grid1 .feedImage {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.grid1 .feedText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.matrix1, .matrix2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.matrix1 .feedItem, .matrix2 .feedItem {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+.card1 .feedItem{
+  min-width: 280px;
+  max-width: 280px;
+}
+.card2 .feedItem{
+  min-width: 280px;
+  max-width: 280px;
+}
+/* Wrapper to position arrows absolutely over the scrollable feed area */
+.cardWrapper {
+  position: relative;
+  width: 300px;
+}
+
+/* Feed container (scrollable row for card layout) */
+.card1, .card2 {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 1rem;
+  scrollbar-width: none;
+
+  max-width: 300px; 
+  margin: auto;
+}
+
+
+.card1::-webkit-scrollbar,
+.card2::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Arrows for overlay */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.212);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+

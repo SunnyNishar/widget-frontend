@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
-import styles from './WidgetCustomizer.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./WidgetCustomizer.module.css";
 
 const WidgetCustomizer = ({ onSettingsChange }) => {
-  const [fontStyle, setFontStyle] = useState('Arial');
-  const [textAlign, setTextAlign] = useState('left');
+  const [fontStyle, setFontStyle] = useState("Arial");
+  const [textAlign, setTextAlign] = useState("left");
   const [border, setBorder] = useState(false);
-  const [borderColor, setBorderColor] = useState('#000000');
+  const [borderColor, setBorderColor] = useState("#000000");
 
-  const handleChange = () => {
+  // Send settings to parent whenever any of them changes
+  useEffect(() => {
     onSettingsChange({
       fontStyle,
       textAlign,
       border,
       borderColor,
     });
-  };
+  }, [fontStyle, textAlign, border, borderColor, onSettingsChange]);
 
   return (
     <div className={styles.container}>
@@ -22,10 +23,7 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
         <label>Font Style</label>
         <select
           value={fontStyle}
-          onChange={(e) => {
-            setFontStyle(e.target.value);
-            handleChange();
-          }}
+          onChange={(e) => setFontStyle(e.target.value)}
         >
           <option value="Arial">Arial</option>
           <option value="Georgia">Georgia</option>
@@ -37,16 +35,16 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
       <div className={styles.formGroup}>
         <label>Text Alignment</label>
         <div className={styles.alignment}>
-          {['left', 'center', 'right'].map((align) => (
+          {["left", "center", "right"].map((align) => (
             <button
               key={align}
-              className={`${styles.alignButton} ${textAlign === align ? styles.active : ''}`}
-              onClick={() => {
-                setTextAlign(align);
-                handleChange();
-              }}
+              className={`${styles.alignButton} ${
+                textAlign === align ? styles.active : ""
+              }`}
+              onClick={() => setTextAlign(align)}
+              type="button"
             >
-              {align.charAt(0) + align.slice(1)}
+              {align.charAt(0).toUpperCase() + align.slice(1)}
             </button>
           ))}
         </div>
@@ -57,12 +55,9 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
           <input
             type="checkbox"
             checked={border}
-            onChange={(e) => {
-              setBorder(e.target.checked);
-              handleChange();
-            }}
-          />
-           Add Border
+            onChange={(e) => setBorder(e.target.checked)}
+          />{" "}
+          Add Border
         </label>
       </div>
 
@@ -72,10 +67,7 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
           <input
             type="color"
             value={borderColor}
-            onChange={(e) => {
-              setBorderColor(e.target.value);
-              handleChange();
-            }}
+            onChange={(e) => setBorderColor(e.target.value)}
           />
         </div>
       )}
