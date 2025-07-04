@@ -1,4 +1,5 @@
-import styles from '../page.module.css';
+import styles from "./sidebar.module.css";
+import Link from "next/link";
 
 export default function Sidebar() {
   return (
@@ -6,8 +7,12 @@ export default function Sidebar() {
       <h2>Feedspot</h2>
       <ul>
         <li>Feedspot Home</li>
-        <li>Widget Home</li>
-        <li>My Widgets</li>
+        <li>
+          <Link href="/">Widget Home</Link>
+        </li>
+        <li>
+          <Link href="/mywidgets">My Widgets</Link>
+        </li>
         <li>Widget Catalog</li>
         <li>Support</li>
         <li>Widget Examples</li>

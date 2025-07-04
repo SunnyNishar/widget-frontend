@@ -1,0 +1,118 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000000;
+}
+.modalContent {
+  background-color: #fff;
+  color: black;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.152);
+  position: relative;
+  text-align: left;
+  font-family: Arial, sans-serif;
+}
+.closeBtn{
+  background-color: #cdcdcc;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;  
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.modalClose {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+.embedTextarea {
+  width: 100%;
+  height: 100px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  resize: none;
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.main {
+  flex-grow: 1;
+  padding: 2rem;
+  background: #fff;
+  color: black;
+  width: 100%;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.topButtons {
+  margin-bottom: 1rem;
+}
+
+.createBtn,
+.learnBtn {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #0073e6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.createBtn:hover,
+.learnBtn:hover {
+  background-color: #005bb5;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f0f0f0;
+}
+
+.actionBtn {
+  margin-right: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background-color: #eee;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+  color: black
+}

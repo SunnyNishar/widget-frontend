@@ -1,11 +1,11 @@
-'use client';
-import { useState } from 'react';
-import styles from './feedcheck.module.css';
+"use client";
+import { useState } from "react";
+import styles from "./feedcheck.module.css";
 
 export default function FeedCheck() {
-  const [folder, setFolder] = useState('');
+  const [folder, setFolder] = useState("");
   const [feeds, setFeeds] = useState([]);
-  const [textColor, setTextColor] = useState('#000000');
+  const [textColor, setTextColor] = useState("#000000");
 
   const handleChange = async (e) => {
     const selected = e.target.value;
@@ -47,11 +47,18 @@ export default function FeedCheck() {
               {item.image && (
                 <img src={item.image} alt="Feed" className={styles.image} />
               )}
-              <a href={item.link} target="_blank" rel="noreferrer" className={styles.title}>
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.title}
+              >
                 {item.title}
               </a>
               <p className={styles.description}>{item.description}</p>
-              <p className={styles.meta}>By {item.author} – {item.date}</p>
+              <p className={styles.meta}>
+                By {item.author} – {item.date}
+              </p>
             </div>
           ))
         )}

@@ -4,6 +4,7 @@ import FeedDisplay from "./components/FeedDisplay";
 import Sidebar from "./components/sidebar";
 import WidgetForm from "./components/widegtform";
 import styles from "./page.module.css";
+import Head from "next/head";
 
 export default function Home() {
   const [selectedFolderId, setSelectedFolderId] = useState(""); // moved up!
@@ -18,6 +19,9 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
+      <Head>
+        <title>FeedSpot</title>
+      </Head>
       <Sidebar />
       <WidgetForm
         setSelectedFolderId={setSelectedFolderId}

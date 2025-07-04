@@ -14,11 +14,67 @@
   scrollbar-width: thin;
   scrollbar-color: #558cba #f0f0f0;
 } */
+.row{
+  display:flex;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  gap: 1rem;
+  align-items: flex-end;
+}
+.widgetentry{
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+.buttons{
+  display: flex;
+  gap: 0.5rem;
+}
+.widgetentry input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background-color: transparent;
+  color: #555;
+}
+.container .button{
+  background-color: #f2d079;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.8;
+  transition: background-color 0.3s ease;
+}
+.container .button:hover {
+  opacity: 1;
+}
+.container .button2{
+  background-color: #cdcdcc;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;  
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.container .button2:hover {
+  opacity: 1;
+}
 .heading{
     margin:0;
-    padding: 2vh;
+    padding:1vh;
     background-color: #e9e9e9;
     color: #558cba;
+      border : 1px solid;
+  border-color: #d9d9d9;
     display: flex;
     text-align: flex-start;
     font-weight: bolder;
