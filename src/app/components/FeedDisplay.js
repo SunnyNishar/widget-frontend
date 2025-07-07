@@ -1,7 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import Styles from "./feeddisplay.module.css";
 
-export default function FeedDisplay({ folderId, layout, customSettings }) {
+export default function FeedDisplay({
+  folderId,
+  layout,
+  customSettings,
+  setCustomSettings,
+  widgetName,
+  setWidgetName,
+  editMode = false,
+  currentWidgetId = null,
+}) {
   const { fontStyle, textAlign, border, borderColor } = customSettings;
 
   const feedStyle = {
@@ -14,6 +23,13 @@ export default function FeedDisplay({ folderId, layout, customSettings }) {
 
   const [feeds, setFeeds] = useState([]);
   const scrollRef = useRef(null);
+
+  const defaultSettings = {
+    fontStyle: "Arial",
+    textAlign: "left",
+    border: false,
+    borderColor: "#000000",
+  };
 
   useEffect(() => {
     if (!folderId) return;
@@ -37,10 +53,16 @@ export default function FeedDisplay({ folderId, layout, customSettings }) {
   };
 
   const isCardLayout = layout === "card1" || layout === "card2";
-  const [widgetName, setWidgetName] = useState("");
+
   const handleSave = async () => {
     if (!folderId || !widgetName.trim()) {
       alert("Please select a folder and enter a widget name.");
+      return;
+    }
+
+    // For edit mode, make sure we have a widget ID
+    if (editMode && !currentWidgetId) {
+      alert("No widget ID provided for editing.");
       return;
     }
 
@@ -54,32 +76,65 @@ export default function FeedDisplay({ folderId, layout, customSettings }) {
       layout: layout,
     };
 
+    // Only add widgetId for edit mode
+    if (editMode) {
+      payload.widgetId = currentWidgetId;
+    }
+
     try {
-      const response = await fetch("http://localhost/backend/saveWidget.php", {
+      const endpoint = editMode ? "updateWidget.php" : "saveWidget.php";
+      const response = await fetch(`http://localhost/backend/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
+
+      // Check if response is ok
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Response is not JSON:", text);
+        throw new Error("Server returned non-JSON response");
+      }
+
       const result = await response.json();
+
       if (result.success) {
-        alert("Widget saved successfully!");
-        // Optional: Redirect to MyWidgets or show embed code
+        alert(
+          editMode
+            ? "Widget updated successfully!"
+            : "Widget saved successfully!"
+        );
+        if (editMode) {
+          // Optionally redirect back to My Widgets page
+          window.location.href = "/mywidgets";
+        }
       } else {
-        alert("Failed to save widget.");
-        console.error(result.error);
+        alert(editMode ? "Failed to update widget." : "Failed to save widget.");
+        console.error("Error from server:", result.error);
       }
     } catch (error) {
       console.error("Save failed:", error);
-      alert("An error occurred while saving.");
+      alert(`An error occurred while saving: ${error.message}`);
     }
+  };
+
+  const handleReset = () => {
+    setCustomSettings(defaultSettings);
+    setWidgetName("");
   };
 
   return (
     <div className={Styles.container}>
       <div className={Styles.heading}>
-        <h2>Feed Preview</h2>
+        <h2>Feed Preview {editMode && "(Edit Mode)"}</h2>
       </div>
       <div className={Styles.row}>
         <div className={Styles.widgetentry}>
@@ -93,9 +148,11 @@ export default function FeedDisplay({ folderId, layout, customSettings }) {
         </div>
         <div className={Styles.buttons}>
           <button className={Styles.button} onClick={handleSave}>
-            Save & Get Code
+            {editMode ? "Update Widget" : "Save & Get Code"}
           </button>
-          <button className={Styles.button2}>Reset</button>
+          <button className={Styles.button2} onClick={handleReset}>
+            Reset
+          </button>
         </div>
       </div>
 
@@ -132,7 +189,7 @@ export default function FeedDisplay({ folderId, layout, customSettings }) {
               )}
               <div className={Styles.feedText}>
                 <h3>
-                  <a href={feed.url} target="_blank">
+                  <a href={feed.url} target="_blank" rel="noopener noreferrer">
                     {feed.title}
                   </a>
                 </h3>

@@ -21,6 +21,8 @@ export default function WidgetForm({
   selectedLayout,
   setSelectedLayout,
   onSettingsChange,
+  customSettings,
+  setCustomSettings,
 }) {
   const [folders, setFolders] = useState([]);
 
@@ -100,7 +102,10 @@ export default function WidgetForm({
       </div>
 
       <div className={styles.preview}>{renderPreviews()}</div>
-      <WidgetCustomizer onSettingsChange={onSettingsChange} />
+      <WidgetCustomizer
+        onSettingsChange={onSettingsChange}
+        customSettings={customSettings}
+      />
     </div>
   );
 }

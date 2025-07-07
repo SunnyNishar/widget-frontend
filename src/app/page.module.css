@@ -4,6 +4,47 @@
   font-family: Arial, sans-serif;
   background: #f4f4f4;
 }
+
+.contentWrapper {
+  display: flex;
+  flex-grow: 1;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.formSection {
+  width: 50%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #ffffff;
+  scrollbar-width: none;;
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.previewSection {
+  width: 50%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  border-left: 1px solid #ccc;
+}
+.formSection:hover,
+.previewSection:hover {
+  background-color: #ded9d950;
+  transition: background-color 0.3s ease;
+}
 /* .active {
   background: #444;
   padding: 5px;

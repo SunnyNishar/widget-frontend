@@ -1,21 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./WidgetCustomizer.module.css";
 
-const WidgetCustomizer = ({ onSettingsChange }) => {
-  const [fontStyle, setFontStyle] = useState("Arial");
-  const [textAlign, setTextAlign] = useState("left");
-  const [border, setBorder] = useState(false);
-  const [borderColor, setBorderColor] = useState("#000000");
-
-  // Send settings to parent whenever any of them changes
-  useEffect(() => {
-    onSettingsChange({
-      fontStyle,
-      textAlign,
-      border,
-      borderColor,
-    });
-  }, [fontStyle, textAlign, border, borderColor, onSettingsChange]);
+const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
+  const { fontStyle, textAlign, border, borderColor } = customSettings;
 
   return (
     <div className={styles.container}>
@@ -23,7 +10,9 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
         <label>Font Style</label>
         <select
           value={fontStyle}
-          onChange={(e) => setFontStyle(e.target.value)}
+          onChange={(e) =>
+            onSettingsChange({ ...customSettings, fontStyle: e.target.value })
+          }
         >
           <option value="Arial">Arial</option>
           <option value="Georgia">Georgia</option>
@@ -41,7 +30,9 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
               className={`${styles.alignButton} ${
                 textAlign === align ? styles.active : ""
               }`}
-              onClick={() => setTextAlign(align)}
+              onClick={() =>
+                onSettingsChange({ ...customSettings, textAlign: align })
+              }
               type="button"
             >
               {align.charAt(0).toUpperCase() + align.slice(1)}
@@ -55,7 +46,9 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
           <input
             type="checkbox"
             checked={border}
-            onChange={(e) => setBorder(e.target.checked)}
+            onChange={(e) =>
+              onSettingsChange({ ...customSettings, border: e.target.checked })
+            }
           />{" "}
           Add Border
         </label>
@@ -67,7 +60,12 @@ const WidgetCustomizer = ({ onSettingsChange }) => {
           <input
             type="color"
             value={borderColor}
-            onChange={(e) => setBorderColor(e.target.value)}
+            onChange={(e) =>
+              onSettingsChange({
+                ...customSettings,
+                borderColor: e.target.value,
+              })
+            }
           />
         </div>
       )}
