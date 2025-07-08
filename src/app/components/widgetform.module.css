@@ -22,6 +22,9 @@
     margin-top: 10px;
     color: black;
     margin-bottom: 10px;
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
 }
 .urlInput input{
     background-color: white;

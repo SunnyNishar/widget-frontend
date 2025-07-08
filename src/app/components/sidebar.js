@@ -3,8 +3,10 @@
 import styles from "./sidebar.module.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
+  const router = useRouter();
   const pathname = usePathname();
   return (
     <div className={styles.sidebar}>
@@ -23,6 +25,15 @@ export default function Sidebar() {
         <li>Support</li>
         <li>Widget Examples</li>
         <li>Customers</li>
+        <button
+          onClick={() => {
+            localStorage.removeItem("user");
+            localStorage.removeItem("user_id");
+            router.push("/login");
+          }}
+        >
+          Logout
+        </button>
       </ul>
     </div>
   );

@@ -55,31 +55,39 @@ export default function FeedDisplay({
   const isCardLayout = layout === "card1" || layout === "card2";
 
   const handleSave = async () => {
+    const user_id = localStorage.getItem("user_id");
+
+    if (!user_id) {
+      alert("User not logged in. Please log in first.");
+      return;
+    }
+
     if (!folderId || !widgetName.trim()) {
       alert("Please select a folder and enter a widget name.");
       return;
     }
 
-    // For edit mode, make sure we have a widget ID
     if (editMode && !currentWidgetId) {
       alert("No widget ID provided for editing.");
       return;
     }
 
     const payload = {
-      folderId: folderId,
+      user_id: parseInt(user_id),
+      folderId,
       widgetName: widgetName.trim(),
-      fontStyle: fontStyle,
-      textAlign: textAlign,
+      fontStyle,
+      textAlign,
       addBorder: border,
-      borderColor: borderColor,
-      layout: layout,
+      borderColor,
+      layout,
     };
 
-    // Only add widgetId for edit mode
     if (editMode) {
       payload.widgetId = currentWidgetId;
     }
+
+    console.log("Saving widget with payload:", payload); // debug line
 
     try {
       const endpoint = editMode ? "updateWidget.php" : "saveWidget.php";
@@ -91,12 +99,10 @@ export default function FeedDisplay({
         body: JSON.stringify(payload),
       });
 
-      // Check if response is ok
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Check if response is JSON
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await response.text();
@@ -113,7 +119,6 @@ export default function FeedDisplay({
             : "Widget saved successfully!"
         );
         if (editMode) {
-          // Optionally redirect back to My Widgets page
           window.location.href = "/mywidgets";
         }
       } else {

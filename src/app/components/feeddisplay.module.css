@@ -126,7 +126,7 @@
   margin-top: 10px;
   max-height: 50vh;
   overflow-y: hidden;
-  scrollbar-width:thin;
+  scrollbar-width:none;
   scrollbar-color: #558cba #f0f0f0; 
 }
 .feeddata:hover{

@@ -5,8 +5,20 @@ import FeedDisplay from "./components/FeedDisplay";
 import Sidebar from "./components/sidebar";
 import WidgetForm from "./components/widegtform";
 import styles from "./page.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const user = localStorage.getItem("user");
+      if (!user) {
+        router.push("/login"); // or use push if you prefer history stack
+      }
+    };
+    checkAuth();
+  }, [router]);
   const searchParams = useSearchParams();
   const editWidgetId = searchParams.get("edit");
 
@@ -42,7 +54,6 @@ export default function Home() {
             setWidgetName(widget.widget_name || "");
             setSelectedLayout(widget.layout || "");
 
-            // Determine view from layout
             if (widget.layout) {
               if (widget.layout.startsWith("grid")) setView("grid");
               else if (widget.layout.startsWith("list")) setView("list");
@@ -50,7 +61,6 @@ export default function Home() {
               else if (widget.layout.startsWith("matrix")) setView("matrix");
             }
 
-            // Set custom settings
             setCustomSettings({
               fontStyle: widget.font_style || "Arial",
               textAlign: widget.text_align || "left",

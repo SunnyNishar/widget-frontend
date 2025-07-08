@@ -14,17 +14,9 @@
   position: relative;
   text-align: left;
   font-family: Arial, sans-serif;
+  animation: slide-up-fade-in 0.3s ease-out forwards;
 }
-.closeBtn{
-  background-color: #cdcdcc;
-  color: rgb(0, 0, 0);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;  
-  font-size: 1rem;
-  opacity: 0.8;
-}
+
 .modalClose {
   position: absolute;
   top: 10px;
@@ -55,6 +47,18 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+
+}
+@keyframes slide-up-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
 }
 
 .main {
@@ -113,6 +117,6 @@
   background-color: #eee;
   border: 1px solid #bbb;
   border-radius: 4px;
-  cursor: pointer;
+  cursor:pointer;
   color: black
 }
