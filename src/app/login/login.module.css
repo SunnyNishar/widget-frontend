@@ -59,7 +59,22 @@
   box-sizing: border-box;
     background-color: #f9f9f9;
     color: #333;
+    padding-right: 35px;;
 }
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #888;
+}
+
 
 .input:focus {
   outline: none;

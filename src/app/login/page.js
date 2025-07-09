@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import styles from "./login.module.css";
 import Link from "next/link";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,8 +31,7 @@ export default function LoginPage() {
       const data = JSON.parse(text);
 
       if (data.success) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("user_id", data.user.id);
+        localStorage.setItem("token", data.token);
         router.push("/");
       } else {
         setError(data.message || "Login failed");
@@ -87,14 +88,22 @@ export default function LoginPage() {
             transition={{ delay: 0.3 }}
           >
             <label>Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={styles.input}
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={styles.input}
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </span>
+            </div>
           </motion.div>
 
           <motion.button

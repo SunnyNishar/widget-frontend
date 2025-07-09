@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import styles from "./signup.module.css";
 import Link from "next/link";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,8 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -105,14 +108,22 @@ export default function SignupPage() {
             transition={{ delay: 0.3 }}
           >
             <label>Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={styles.input}
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={styles.input}
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </span>
+            </div>
           </motion.div>
 
           <motion.div
@@ -122,14 +133,26 @@ export default function SignupPage() {
             transition={{ delay: 0.4 }}
           >
             <label>Confirm Password</label>
-            <input
-              type="password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className={styles.input}
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className={styles.input}
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <AiOutlineEyeInvisible />
+                ) : (
+                  <AiOutlineEye />
+                )}
+              </span>
+            </div>
           </motion.div>
 
           <motion.button

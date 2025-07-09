@@ -1,6 +1,6 @@
-'use client';
-import styles from './buttons.module.css';
-import Image from 'next/image';
+"use client";
+import styles from "./buttons.module.css";
+import Image from "next/image";
 import grid from "@/assets/menu.png";
 import list from "@/assets/list.svg";
 import matrix from "@/assets/matrix.svg";
@@ -10,26 +10,30 @@ export default function Buttons({ setView, currentView }) {
   return (
     <div className={styles.viewicons}>
       <button
-        onClick={() => setView('grid')}
-        className={currentView === 'grid' ? styles.active : ''}
+        onClick={() => setView("grid")}
+        className={currentView === "grid" ? styles.active : ""}
+        title="Grid View"
       >
         <Image src={grid} width={16} height={16} alt="Grid view" />
       </button>
       <button
-        onClick={() => setView('list')}
-        className={currentView === 'list' ? styles.active : ''}
+        onClick={() => setView("list")}
+        className={currentView === "list" ? styles.active : ""}
+        title="List View"
       >
         <Image src={list} width={16} height={16} alt="List view" />
       </button>
       <button
-        onClick={() => setView('matrix')}
-        className={currentView === 'matrix' ? styles.active : ''}
+        onClick={() => setView("matrix")}
+        className={currentView === "matrix" ? styles.active : ""}
+        title="Matrix View"
       >
         <Image src={matrix} width={16} height={16} alt="Matrix view" />
       </button>
       <button
-        onClick={() => setView('card')}
-        className={currentView === 'card' ? styles.active : ''}
+        onClick={() => setView("card")}
+        className={currentView === "card" ? styles.active : ""}
+        title="Card View"
       >
         <Image src={card} width={16} height={16} alt="Card view" />
       </button>

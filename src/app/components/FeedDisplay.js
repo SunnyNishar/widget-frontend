@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Styles from "./feeddisplay.module.css";
+import { IoIosSend } from "react-icons/io";
 
 export default function FeedDisplay({
   folderId,
@@ -55,9 +56,9 @@ export default function FeedDisplay({
   const isCardLayout = layout === "card1" || layout === "card2";
 
   const handleSave = async () => {
-    const user_id = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
 
-    if (!user_id) {
+    if (!token) {
       alert("User not logged in. Please log in first.");
       return;
     }
@@ -73,7 +74,6 @@ export default function FeedDisplay({
     }
 
     const payload = {
-      user_id: parseInt(user_id),
       folderId,
       widgetName: widgetName.trim(),
       fontStyle,
@@ -95,6 +95,7 @@ export default function FeedDisplay({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -152,10 +153,19 @@ export default function FeedDisplay({
           />
         </div>
         <div className={Styles.buttons}>
-          <button className={Styles.button} onClick={handleSave}>
+          <button
+            className={Styles.button}
+            onClick={handleSave}
+            title={editMode ? "Update Widget" : "Save & Get Code"}
+          >
             {editMode ? "Update Widget" : "Save & Get Code"}
+            <IoIosSend />
           </button>
-          <button className={Styles.button2} onClick={handleReset}>
+          <button
+            className={Styles.button2}
+            onClick={handleReset}
+            title="Reset Settings"
+          >
             Reset
           </button>
         </div>

@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../components/sidebar";
 import Styles from "./mywidgets.module.css";
 import Modal from "react-modal";
 import Link from "next/link";
+import { isTokenExpired } from "../../utils/auth";
 
 export default function MyWidgetsPage() {
   const [widgets, setWidgets] = useState([]);
@@ -13,21 +14,60 @@ export default function MyWidgetsPage() {
   const [selectedWidget, setSelectedWidget] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  // const [authenticated, setAuthenticated] = useState(false);
+  const sessionHandled = useRef(false);
 
-  // Check if user is logged in
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
+    const token = localStorage.getItem("token");
+    if (sessionHandled.current) return;
+    if (!token || isTokenExpired(token)) {
+      sessionHandled.current = true;
+      localStorage.removeItem("token");
+      alert("Session expired. Please log in again.");
       router.push("/login");
+      return; // 🚨 prevent further code
     }
+    // setAuthenticated(true);
+
+    fetch("http://localhost/backend/getWidgets.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success === false) {
+          sessionHandled.current = true;
+          console.error("Auth failed:", data.error);
+          router.push("/login"); // invalid token
+        } else {
+          setWidgets(data || []);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch widgets:", err);
+        setIsLoading(false);
+      });
   }, []);
 
   const handleDelete = (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Not logged in.");
+      router.push("/login");
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this widget?")) return;
 
     fetch("http://localhost/backend/deleteWidget.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ id }),
     })
       .then((res) => res.json())
@@ -53,27 +93,6 @@ export default function MyWidgetsPage() {
     setIsModalOpen(true);
   };
 
-  // Fetch widgets for logged-in user
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return;
-
-    fetch("http://localhost/backend/getWidgets.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: user.id }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setWidgets(data || []);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch widgets:", err);
-        setIsLoading(false);
-      });
-  }, []);
-
   const buttonVariants = {
     hover: { scale: 1.05, transition: { duration: 0.2 } },
     tap: { scale: 0.95, transition: { duration: 0.1 } },
@@ -84,7 +103,7 @@ export default function MyWidgetsPage() {
     visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.3 } },
     exit: { opacity: 0, scale: 0.8, y: -50, transition: { duration: 0.2 } },
   };
-
+  // if (!authenticated) return null;
   return (
     <motion.div
       className={Styles.wrapper}
@@ -150,6 +169,7 @@ export default function MyWidgetsPage() {
                         variants={buttonVariants}
                         whileHover="hover"
                         whileTap="tap"
+                        tooltip="Delete Widget"
                       >
                         Delete
                       </motion.button>

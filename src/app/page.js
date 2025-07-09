@@ -12,10 +12,8 @@ export default function Home() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const user = localStorage.getItem("user");
-      if (!user) {
-        router.push("/login"); // or use push if you prefer history stack
-      }
+      const token = localStorage.getItem("token");
+      if (!token) router.push("/login");
     };
     checkAuth();
   }, [router]);
