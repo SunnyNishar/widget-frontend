@@ -22,7 +22,6 @@ export default function WidgetForm({
   setSelectedLayout,
   onSettingsChange,
   customSettings,
-  setCustomSettings,
 }) {
   const [folders, setFolders] = useState([]);
 

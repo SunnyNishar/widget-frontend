@@ -2,15 +2,30 @@
 
 import { motion } from "framer-motion";
 import styles from "./sidebar.module.css";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token);
+        if (decoded.email) {
+          setEmail(decoded.email);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to decode JWT:", error);
+    }
+  }, []);
 
   const handleLogout = () => {
     setIsLoggingOut(true);
@@ -65,6 +80,25 @@ export default function Sidebar() {
             )}
           </motion.li>
         ))}
+        {email && (
+          <motion.div
+            className={styles.userInfo}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: (menuItems.length - 1) * 0.1 }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {/* <img
+                src="/user-icon.png" // replace this with your actual user icon
+                alt="User Icon"
+                width={24}
+                height={24}
+                style={{ borderRadius: "50%" }}
+              /> */}
+              <span>{email}</span>
+            </div>
+          </motion.div>
+        )}
 
         {/* Logout Button - appears with the last menu items */}
         <motion.button

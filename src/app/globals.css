@@ -40,24 +40,4 @@ a {
     color-scheme: dark;
   }
 }
-.custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #70a3d6;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 150ms ease, height 150ms ease, background-color 150ms ease;
-  mix-blend-mode: difference;
-}
-
-.custom-cursor.cursor-hover {
-  width: 25px;
-  height: 25px;
-  background-color: #70a3d6;
-}
 

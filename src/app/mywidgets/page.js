@@ -23,7 +23,7 @@ export default function MyWidgetsPage() {
     if (!token || isTokenExpired(token)) {
       sessionHandled.current = true;
       localStorage.removeItem("token");
-      alert("Session expired. Please log in again.");
+      alert("Session Token expired. Please log in again.");
       router.push("/login");
       return; // 🚨 prevent further code
     }
@@ -115,28 +115,30 @@ export default function MyWidgetsPage() {
         <h1 className={Styles.heading}>My Widgets</h1>
 
         <div className={Styles.topButtons}>
-          <motion.button
-            className={Styles.createBtn}
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
+          <Link href="/">
+            <motion.button
+              className={Styles.createBtn}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Create New Widget
+            </motion.button>
+          </Link>
+          <Link
+            href="https://youtu.be/ea-ybXtsOCc"
+            target="_blank"
+            rel="noreferrer"
           >
-            <Link href="/">Create New Widget</Link>
-          </motion.button>
-          <motion.button
-            className={Styles.learnBtn}
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <a
-              href="https://youtu.be/ea-ybXtsOCc"
-              target="_blank"
-              rel="noreferrer"
+            <motion.button
+              className={Styles.learnBtn}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
             >
               Learn More
-            </a>
-          </motion.button>
+            </motion.button>
+          </Link>
         </div>
 
         {isLoading ? (
