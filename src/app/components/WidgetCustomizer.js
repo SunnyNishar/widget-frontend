@@ -18,6 +18,7 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
           <option value="Georgia">Georgia</option>
           <option value="Courier New">Courier New</option>
           <option value="Verdana">Verdana</option>
+          <option value="Times New Roman">Times New Roman</option>
         </select>
       </div>
 

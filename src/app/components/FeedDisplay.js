@@ -35,7 +35,9 @@ export default function FeedDisplay({
   useEffect(() => {
     if (!folderId) return;
 
-    fetch(`http://localhost/backend/getFeeds.php?folder_id=${folderId}`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/getFeeds.php?folder_id=${folderId}`
+    )
       .then((res) => res.json())
       .then((data) => setFeeds(data))
       .catch((err) => console.error("Failed to fetch feeds:", err));
@@ -91,14 +93,17 @@ export default function FeedDisplay({
 
     try {
       const endpoint = editMode ? "updateWidget.php" : "saveWidget.php";
-      const response = await fetch(`http://localhost/backend/${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,9 +124,7 @@ export default function FeedDisplay({
             ? "Widget updated successfully!"
             : "Widget saved successfully!"
         );
-        if (editMode) {
-          window.location.href = "/mywidgets";
-        }
+        window.location.href = "/mywidgets";
       } else {
         alert(editMode ? "Failed to update widget." : "Failed to save widget.");
         console.error("Error from server:", result.error);
@@ -197,7 +200,7 @@ export default function FeedDisplay({
             <div key={feed.id} className={Styles.feedItem} style={feedStyle}>
               {layout !== "list1" && (
                 <img
-                  src={`http://localhost:80/backend/${feed.image_url}`}
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`}
                   className={Styles.feedImage}
                   alt={feed.title}
                 />

@@ -1,42 +1,32 @@
 "use client";
 import styles from "./buttons.module.css";
 import Image from "next/image";
+
 import grid from "@/assets/menu.png";
 import list from "@/assets/list.svg";
 import matrix from "@/assets/matrix.svg";
 import card from "@/assets/card.svg";
 
+const viewOptions = [
+  { key: "grid", icon: grid, alt: "Grid view" },
+  { key: "list", icon: list, alt: "List view" },
+  { key: "matrix", icon: matrix, alt: "Matrix view" },
+  { key: "card", icon: card, alt: "Card view" },
+];
+
 export default function Buttons({ setView, currentView }) {
   return (
     <div className={styles.viewicons}>
-      <button
-        onClick={() => setView("grid")}
-        className={currentView === "grid" ? styles.active : ""}
-        title="Grid View"
-      >
-        <Image src={grid} width={16} height={16} alt="Grid view" />
-      </button>
-      <button
-        onClick={() => setView("list")}
-        className={currentView === "list" ? styles.active : ""}
-        title="List View"
-      >
-        <Image src={list} width={16} height={16} alt="List view" />
-      </button>
-      <button
-        onClick={() => setView("matrix")}
-        className={currentView === "matrix" ? styles.active : ""}
-        title="Matrix View"
-      >
-        <Image src={matrix} width={16} height={16} alt="Matrix view" />
-      </button>
-      <button
-        onClick={() => setView("card")}
-        className={currentView === "card" ? styles.active : ""}
-        title="Card View"
-      >
-        <Image src={card} width={16} height={16} alt="Card view" />
-      </button>
+      {viewOptions.map(({ key, icon, alt }) => (
+        <button
+          key={key}
+          onClick={() => setView(key)}
+          className={currentView === key ? styles.active : ""}
+          title={`${key.charAt(0).toUpperCase() + key.slice(1)} View`}
+        >
+          <Image src={icon} width={16} height={16} alt={alt} />
+        </button>
+      ))}
     </div>
   );
 }

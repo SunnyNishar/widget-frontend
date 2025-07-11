@@ -1,114 +1,82 @@
-.heading{
-    margin:0;
-    padding:2vh;
-    background-color: #e9e9e9;
-    color: #558cba;
-      border : 1px solid;
-  border-color: #d9d9d9;
-    display: flex;
-    text-align: flex-start;
-    justify-content: space-evenly;
+.heading {
+  margin: 0;
+  padding: 2vh;
+  background-color: #e9e9e9;
+  color: #558cba;
+  border: 1px solid #d9d9d9;
+  display: flex;
+  justify-content: space-evenly;
+  text-align: left;
 }
-.maindiv{
-    width: 100%;
-    padding:10px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    height: infinite;
-    color: black;
+
+.maindiv {
+  width: 100%;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  color: black;
 }
-.urlInput{
-    padding: 10px;
-    margin-top: 10px;
-    color: black;
-    margin-bottom: 10px;
-    display:flex;
-    flex-direction: column;
-    gap: 5px;
+
+.urlInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px 0;
+  padding: 10px;
+  color: black;
 }
-.urlInput input{
-    background-color: white;
-    color: black;
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-.urlInput select{
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: white;
-    color: black;
+
+.urlInput input,
+.urlInput select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
 }
 
 .preview {
   width: auto;
   height: 350px;
-  background-color: #e9e9e9;
-  border : 1px solid;
-  border-color: #d9d9d9;
-  border-radius: 5px;
   margin-top: 5px;
   padding: 10px;
+  background-color: #e9e9e9;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  
 }
-
-.preview2 button {
-  position: relative;
-  width: 100%;  
-  height: 20px;  
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-/* .preview2{
-
-  position: relative;
-  padding: 3px;
-  /* margin: 10px; 
-} */
-
-.preview3{
-    width: 100%;
-    height: 200px;
-    position: relative;
-    background-color: #f0f0f0;
-    /* border: 2px solid #000000; */
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-/* .mainPreview{
-    width: 100%;
-    height: 300px;
-    background-color: #e9e9e9;
-    border : 2px solid #000000;
-    border-color: black;
-    border-radius: 5px;
-    margin-top: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-} */
 
 .preview2 {
   margin: 10px;
   border-radius: 8px;
   overflow: hidden;
-  /* transition: all 0.3s ease; */
   border: 2px solid transparent;
 }
 
 .preview2.selected {
   border: 3px solid #558cba;
   box-shadow: 0 0 10px rgba(85, 140, 186, 0.6);
+}
+
+.preview2 button {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.preview3 {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

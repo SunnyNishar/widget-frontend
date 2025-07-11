@@ -29,7 +29,7 @@ export default function MyWidgetsPage() {
     }
     // setAuthenticated(true);
 
-    fetch("http://localhost/backend/getWidgets.php", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/getWidgets.php`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export default function MyWidgetsPage() {
     }
     if (!window.confirm("Are you sure you want to delete this widget?")) return;
 
-    fetch("http://localhost/backend/deleteWidget.php", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteWidget.php`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -125,11 +125,7 @@ export default function MyWidgetsPage() {
               Create New Widget
             </motion.button>
           </Link>
-          <Link
-            href="https://youtu.be/ea-ybXtsOCc"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Link href="https://youtu.be/ea-ybXtsOCc" target="_blank">
             <motion.button
               className={Styles.learnBtn}
               variants={buttonVariants}
@@ -171,7 +167,7 @@ export default function MyWidgetsPage() {
                         variants={buttonVariants}
                         whileHover="hover"
                         whileTap="tap"
-                        tooltip="Delete Widget"
+                        title="Delete Widget"
                       >
                         Delete
                       </motion.button>

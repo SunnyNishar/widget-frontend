@@ -89,7 +89,7 @@ export default function Sidebar() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               {/* <img
-                src="/user-icon.png" // replace this with your actual user icon
+                src="/user-icon.png"
                 alt="User Icon"
                 width={24}
                 height={24}
@@ -118,7 +118,7 @@ export default function Sidebar() {
                 animate={{ rotate: 360 }}
                 transition={{
                   duration: 1,
-                  // repeat: Number.POSITIVE_INFINITY,
+                  repeat: Number.POSITIVE_INFINITY,
                   ease: "linear",
                 }}
               />

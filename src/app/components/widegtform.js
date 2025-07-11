@@ -33,7 +33,7 @@ export default function WidgetForm({
   // const [selectedPreview, setSelectedPreview] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost/backend/getFolders.php")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/getFolders.php`)
       .then((res) => res.json())
       .then((data) => setFolders(data))
       .catch((err) => console.error("Failed to fetch folders:", err));
