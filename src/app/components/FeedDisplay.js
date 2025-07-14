@@ -4,6 +4,7 @@ import { IoIosSend } from "react-icons/io";
 
 export default function FeedDisplay({
   folderId,
+  feedUrl,
   layout,
   customSettings,
   setCustomSettings,
@@ -33,25 +34,42 @@ export default function FeedDisplay({
   };
 
   useEffect(() => {
-    if (!folderId) return;
+    if (!folderId && !feedUrl) return;
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/getFeeds.php?folder_id=${folderId}`
-    )
+    let url = "";
+    if (feedUrl) {
+      url = `${
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      }/getFeedsFromUrl.php?url=${encodeURIComponent(feedUrl)}`;
+    } else {
+      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/getFeeds.php?folder_id=${folderId}`;
+    }
+
+    fetch(url)
       .then((res) => res.json())
       .then((data) => setFeeds(data))
       .catch((err) => console.error("Failed to fetch feeds:", err));
-  }, [folderId]);
+  }, [folderId, feedUrl]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+      // Calculate the exact width of one card plus gap
+      const cardWidth = 280; // min-width of card
+      const gap = 16; // 1rem gap
+      const scrollAmount = cardWidth + gap;
+
+      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      // Calculate the exact width of one card plus gap
+      const cardWidth = 280; // min-width of card
+      const gap = 16; // 1rem gap
+      const scrollAmount = cardWidth + gap;
+
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -65,8 +83,10 @@ export default function FeedDisplay({
       return;
     }
 
-    if (!folderId || !widgetName.trim()) {
-      alert("Please select a folder and enter a widget name.");
+    if ((!folderId && !feedUrl) || !widgetName.trim()) {
+      alert(
+        "Please enter a widget name and either select a folder or provide an RSS URL."
+      );
       return;
     }
 
@@ -76,13 +96,14 @@ export default function FeedDisplay({
     }
 
     const payload = {
-      folderId,
       widgetName: widgetName.trim(),
       fontStyle,
       textAlign,
       addBorder: border,
       borderColor,
       layout,
+      folderId: folderId || null,
+      rssUrl: feedUrl || null,
     };
 
     if (editMode) {
@@ -196,26 +217,39 @@ export default function FeedDisplay({
           ref={isCardLayout ? scrollRef : null}
           className={`${Styles.feeddata} ${Styles[layout]}`}
         >
-          {feeds.map((feed) => (
-            <div key={feed.id} className={Styles.feedItem} style={feedStyle}>
-              {layout !== "list1" && (
-                <img
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`}
-                  className={Styles.feedImage}
-                  alt={feed.title}
-                />
-              )}
-              <div className={Styles.feedText}>
-                <h3>
-                  <a href={feed.url} target="_blank" rel="noopener noreferrer">
-                    {feed.title}
-                  </a>
-                </h3>
-                <p>{feed.description}</p>
-                <small>{feed.date}</small>
+          {Array.isArray(feeds) &&
+            feeds.map((feed, index) => (
+              <div
+                key={`feed-${index}`}
+                className={Styles.feedItem}
+                style={feedStyle}
+              >
+                {layout !== "list1" && (
+                  <img
+                    src={
+                      feed.image?.startsWith("http")
+                        ? feed.image
+                        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`
+                    }
+                    className={Styles.feedImage}
+                    // alt={feed.title}
+                  />
+                )}
+                <div className={Styles.feedText}>
+                  <h4>
+                    <a
+                      href={feed.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {feed.title}
+                    </a>
+                  </h4>
+                  <p>{feed.description}</p>
+                  <small>{feed.date}</small>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>

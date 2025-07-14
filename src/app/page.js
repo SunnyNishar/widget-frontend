@@ -19,9 +19,10 @@ export default function Home() {
   }, [router]);
   const searchParams = useSearchParams();
   const editWidgetId = searchParams.get("edit");
-
+  const [tempFeedUrl, setTempFeedUrl] = useState("");
   const [selectedFolderId, setSelectedFolderId] = useState("");
   const [view, setView] = useState("grid");
+  const [feedUrl, setFeedUrl] = useState("");
   const [selectedLayout, setSelectedLayout] = useState("");
   const [customSettings, setCustomSettings] = useState({
     fontStyle: "Arial",
@@ -47,6 +48,8 @@ export default function Home() {
           if (data.success) {
             const widget = data.widget;
 
+            setFeedUrl(widget.rss_url || "");
+            setTempFeedUrl(widget.rss_url || "");
             // Set all the form states with the widget data
             setSelectedFolderId(widget.folder_id || "");
             setWidgetName(widget.widget_name || "");
@@ -106,6 +109,10 @@ export default function Home() {
             onSettingsChange={setCustomSettings}
             customSettings={customSettings}
             setCustomSettings={setCustomSettings}
+            feedUrl={feedUrl}
+            setFeedUrl={setFeedUrl}
+            tempFeedUrl={tempFeedUrl}
+            setTempFeedUrl={setTempFeedUrl}
             editMode={editMode}
           />
         </div>
@@ -119,6 +126,7 @@ export default function Home() {
             widgetName={widgetName}
             setWidgetName={setWidgetName}
             editMode={editMode}
+            feedUrl={feedUrl}
             currentWidgetId={currentWidgetId}
           />
         </div>

@@ -96,6 +96,10 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
+  /* Add proper text wrapping */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .feedItem img,
@@ -112,17 +116,29 @@
   margin-bottom: 0.4rem;
   font-weight: bold;
   color: #6d8cd1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
 }
 
 .feedItem p {
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
   color: #555;
+  /* Ensure description wraps properly */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
 }
 
 .feedItem small {
   color: #888;
   font-size: 0.8rem;
+  /* Ensure date is always visible */
+  display:block;
+  margin-top: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* List/Grid common styles */
@@ -148,6 +164,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Ensure text container doesn't overflow */
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Grid2 */
@@ -168,6 +187,36 @@
 .card2 .feedItem {
   min-width: 280px;
   max-width: 280px;
+  /* Ensure proper height to accommodate all content */
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card1 .feedText,
+.card2 .feedText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Prevent text overflow */
+  min-height: 0;
+  overflow: hidden;
+  line-clamp: 1; /* Limit to 3 lines */
+  -webkit-line-clamp: 1; /* For WebKit browsers */
+}
+
+.card1 .feedItem p,
+.card2 .feedItem p {
+  /* Limit description height and add ellipsis if needed */
+  max-height: 4.2em; /* Approximately 3 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+ -webkit-line-clamp: 2;   
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .cardWrapper {

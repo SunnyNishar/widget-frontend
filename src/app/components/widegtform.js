@@ -22,6 +22,9 @@ export default function WidgetForm({
   setSelectedLayout,
   onSettingsChange,
   customSettings,
+  setFeedUrl,
+  tempFeedUrl,
+  setTempFeedUrl,
 }) {
   const [folders, setFolders] = useState([]);
 
@@ -77,13 +80,32 @@ export default function WidgetForm({
       </div>
       <div className={styles.urlInput}>
         <p>Enter Feed URL</p>
-        <input type="text" defaultValue={"http://rss.feedspot.com/..."} />
+        <input
+          type="text"
+          value={tempFeedUrl}
+          onChange={(e) => {
+            setTempFeedUrl(e.target.value);
+            setSelectedFolderId(""); // clear folder selection if manually entering URL
+          }}
+          placeholder="https://example.com/rss"
+        />
+        <button
+          className={styles.loadButton}
+          onClick={() => {
+            if (tempFeedUrl.trim()) {
+              setFeedUrl(tempFeedUrl.trim());
+            }
+          }}
+        >
+          Load Preview
+        </button>
         <br />
         <p>Or Select Feedspot Folder URL</p>
         <select
           value={selectedFolderId}
           onChange={(e) => {
             setSelectedFolderId(e.target.value);
+            setFeedUrl(""); // clear feed URL if folder is selected
           }}
         >
           <option value="">-- Select a Folder --</option>

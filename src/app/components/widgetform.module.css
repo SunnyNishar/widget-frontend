@@ -35,6 +35,19 @@
   background-color: white;
   color: black;
 }
+.loadButton {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.loadButton:hover {
+  background-color: #005bb5;
+}
 
 .preview {
   width: auto;
