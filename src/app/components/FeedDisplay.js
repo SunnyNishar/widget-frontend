@@ -24,6 +24,7 @@ export default function FeedDisplay({
   };
 
   const [feeds, setFeeds] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
   const scrollRef = useRef(null);
 
   const defaultSettings = {
@@ -34,7 +35,14 @@ export default function FeedDisplay({
   };
 
   useEffect(() => {
-    if (!folderId && !feedUrl) return;
+    // Don't fetch if no folderId or feedUrl
+    if (!folderId && !feedUrl) {
+      setFeeds([]);
+      return;
+    }
+
+    // Start loading
+    setIsLoading(true);
 
     let url = "";
     if (feedUrl) {
@@ -47,8 +55,16 @@ export default function FeedDisplay({
 
     fetch(url)
       .then((res) => res.json())
-      .then((data) => setFeeds(data))
-      .catch((err) => console.error("Failed to fetch feeds:", err));
+      .then((data) => {
+        setFeeds(data);
+        setIsLoading(false); // Stop loading on success
+      })
+      .catch((err) => {
+        console.error("Failed to fetch feeds:", err);
+        alert("Failed to fetch feeds. Please try again.");
+        setFeeds([]);
+        setIsLoading(false); // Stop loading on error
+      });
   }, [folderId, feedUrl]);
 
   const scrollLeft = () => {
@@ -64,9 +80,8 @@ export default function FeedDisplay({
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      // Calculate the exact width of one card plus gap
-      const cardWidth = 280; // min-width of card
-      const gap = 16; // 1rem gap
+      const cardWidth = 280;
+      const gap = 16;
       const scrollAmount = cardWidth + gap;
 
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
@@ -80,6 +95,7 @@ export default function FeedDisplay({
 
     if (!token) {
       alert("User not logged in. Please log in first.");
+      window.location.href = "/login";
       return;
     }
 
@@ -161,6 +177,14 @@ export default function FeedDisplay({
     setWidgetName("");
   };
 
+  // Loading indicator component
+  const LoadingIndicator = () => (
+    <div className={Styles.loadingContainer}>
+      <div className={Styles.spinner}></div>
+      <p>Loading feeds...</p>
+    </div>
+  );
+
   return (
     <div className={Styles.container}>
       <div className={Styles.heading}>
@@ -217,7 +241,12 @@ export default function FeedDisplay({
           ref={isCardLayout ? scrollRef : null}
           className={`${Styles.feeddata} ${Styles[layout]}`}
         >
-          {Array.isArray(feeds) &&
+          {/* Show loading indicator when loading */}
+          {isLoading && <LoadingIndicator />}
+
+          {/* Show feeds when not loading and feeds exist */}
+          {!isLoading &&
+            Array.isArray(feeds) &&
             feeds.map((feed, index) => (
               <div
                 key={`feed-${index}`}
@@ -250,6 +279,15 @@ export default function FeedDisplay({
                 </div>
               </div>
             ))}
+
+          {/* Show message when not loading and no feeds */}
+          {!isLoading && (!feeds || feeds.length === 0) && (
+            <div className={Styles.noFeedsMessage}>
+              <p>
+                No feeds available. Please select a folder or enter a feed URL.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

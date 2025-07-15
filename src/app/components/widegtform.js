@@ -90,6 +90,7 @@ export default function WidgetForm({
           placeholder="https://example.com/rss"
         />
         <button
+          type="submit"
           className={styles.loadButton}
           onClick={() => {
             if (tempFeedUrl.trim()) {
@@ -106,6 +107,7 @@ export default function WidgetForm({
           onChange={(e) => {
             setSelectedFolderId(e.target.value);
             setFeedUrl(""); // clear feed URL if folder is selected
+            setTempFeedUrl(""); // clear temp feed URL
           }}
         >
           <option value="">-- Select a Folder --</option>

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { SlUser } from "react-icons/sl";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -95,6 +96,7 @@ export default function Sidebar() {
                 height={24}
                 style={{ borderRadius: "50%" }}
               /> */}
+              <SlUser width={100} height={100} />
               <span>{email}</span>
             </div>
           </motion.div>
