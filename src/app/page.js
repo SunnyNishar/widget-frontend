@@ -85,6 +85,14 @@ export default function Home() {
         });
     }
   }, [editWidgetId]);
+  useEffect(() => {
+    const rssFromCategory = searchParams.get("feed");
+
+    if (rssFromCategory && !editWidgetId) {
+      setFeedUrl(rssFromCategory);
+      setTempFeedUrl(rssFromCategory);
+    }
+  }, [searchParams, editWidgetId]);
 
   if (isLoading) {
     return (

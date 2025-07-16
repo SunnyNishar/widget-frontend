@@ -16,6 +16,8 @@ export default function MyWidgetsPage() {
   const router = useRouter();
   // const [authenticated, setAuthenticated] = useState(false);
   const sessionHandled = useRef(false);
+  const [editingWidgetId, setEditingWidgetId] = useState(null);
+  const [editedName, setEditedName] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -87,6 +89,43 @@ export default function MyWidgetsPage() {
   const handleEdit = (widgetId) => {
     router.push(`/?edit=${widgetId}`);
   };
+  const handleSaveWidgetName = (widgetId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Not logged in.");
+      router.push("/login");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/updateWidgetName.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        id: widgetId,
+        widget_name: editedName.trim(),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setWidgets((prev) =>
+            prev.map((w) =>
+              w.id === widgetId ? { ...w, widget_name: editedName.trim() } : w
+            )
+          );
+          setEditingWidgetId(null);
+        } else {
+          alert("Failed to update widget name.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating widget name:", err);
+        alert("An error occurred.");
+      });
+  };
 
   const handleShowEmbedCode = (widget) => {
     setSelectedWidget(widget);
@@ -146,6 +185,7 @@ export default function MyWidgetsPage() {
             <thead>
               <tr>
                 <th>Widget Name</th>
+                <th>Feed URL / Folder Name</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -159,7 +199,72 @@ export default function MyWidgetsPage() {
                     exit={{ opacity: 0, x: 20 }}
                     layout
                   >
-                    <td>{widget.widget_name}</td>
+                    <td>
+                      {editingWidgetId === widget.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                            onBlur={() => handleSave(widget.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter")
+                                handleSaveWidgetName(widget.id);
+                            }}
+                            className={Styles.inlineInput}
+                          />
+                          <button
+                            onClick={() => handleSaveWidgetName(widget.id)}
+                            className={Styles.inlineSaveBtn}
+                            title="Save"
+                          >
+                            ✅
+                          </button>
+                          <button
+                            onClick={() => setEditingWidgetId(null)}
+                            className={Styles.inlineCancelBtn}
+                            title="Cancel"
+                          >
+                            ❌
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className={Styles.nameCell}>
+                            <span>{widget.widget_name}</span>
+                            <button
+                              onClick={() => {
+                                setEditingWidgetId(widget.id);
+                                setEditedName(widget.widget_name);
+                              }}
+                              className={Styles.inlineEditBtn}
+                              title="Edit name"
+                            >
+                              ✏️
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </td>
+
+                    <td>
+                      {widget.folder_name ? (
+                        widget.folder_name
+                      ) : widget.rss_url ? (
+                        <a
+                          href={widget.rss_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={widget.rss_url}
+                        >
+                          {widget.rss_url.length > 30
+                            ? `${widget.rss_url.substring(0, 30)}...`
+                            : widget.rss_url}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
                     <td>
                       <motion.button
                         onClick={() => handleDelete(widget.id)}

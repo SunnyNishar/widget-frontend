@@ -50,7 +50,7 @@ export default function Sidebar() {
     { name: "Feedspot Home", href: "#", clickable: false },
     { name: "Widget Home", href: "/", clickable: true },
     { name: "My Widgets", href: "/mywidgets", clickable: true },
-    { name: "Widget Catalog", href: "#", clickable: false },
+    { name: "Widget Catalog", href: "/widgetcatalog", clickable: true },
     { name: "Support", href: "#", clickable: false },
     { name: "Widget Examples", href: "#", clickable: false },
     { name: "Customers", href: "#", clickable: false },
@@ -96,7 +96,7 @@ export default function Sidebar() {
                 height={24}
                 style={{ borderRadius: "50%" }}
               /> */}
-              <SlUser width={100} height={100} />
+              <SlUser width={24} height={24} />
               <span>{email}</span>
             </div>
           </motion.div>

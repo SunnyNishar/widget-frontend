@@ -2,6 +2,7 @@
   display: flex;
   min-height: 100vh;
   background-color: #000000;
+  margin-left: 250px; /* Ensure sidebar does not overlap */
 }
 .modalContent {
   background-color: #fff;
@@ -120,3 +121,40 @@
   cursor:pointer;
   color: black
 }
+
+.table td a {
+  color: #0073e6;
+  text-decoration: none;
+}
+.table td a:hover {
+  text-decoration: underline;
+}
+.inlineInput {
+  padding: 4px;
+  font-size: 14px;
+  width: 100px;
+  margin-right: 5px;
+  background-color: white;
+  border: 1px solid #000000;
+  color: black;
+  border-radius: 4px;
+}
+
+.inlineEditBtn,
+.inlineSaveBtn,
+.inlineCancelBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+  font-size: 16px;
+}
+.nameCell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+
