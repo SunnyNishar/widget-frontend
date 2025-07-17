@@ -6,6 +6,16 @@
   border-radius: 8px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
+.header {
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 1vh;
+  background-color: #e9e9e9;
+  color: #558cba;
+  border: 1px solid #d9d9d9;
+  display: flex;
+  font-weight: bolder;
+}
 
 .formGroup {
   margin-bottom: 12px;
@@ -49,4 +59,247 @@
 .active {
   background-color: #007bff;
   color: white;
+}
+.section {
+  margin-bottom: 20px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.stepControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepControl button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.colorInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.colorPreview {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 5px;
+}
+
+.alignmentButtons {
+  display: flex;
+  gap: 5px;
+}
+
+.alignmentButtons button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+/* 
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+} */
+.section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.radioGroup {
+  margin-bottom: 12px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.radioLabel input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.radioText {
+  flex: 1;
+  color: #333;
+}
+
+.helpIcon {
+  width: 16px;
+  height: 16px;
+  background-color: #ccc;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: help;
+}
+
+.stepControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 24px;
+  margin-top: 8px;
+}
+
+.stepButton {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: white;
+  color: black;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.stepButton:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.stepButton:active {
+  background-color: #e0e0e0;
+}
+
+.numberInput {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+.numberInput {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.toggleGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.toggleText {
+  color: #333;
+  font-weight: 500;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switchInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.switchInput:checked + .slider {
+  background-color: #2196f3;
+}
+
+.switchInput:checked + .slider:before {
+  transform: translateX(26px);
 }

@@ -1,5 +1,5 @@
 .container {
-  width: 100%;
+  width: auto;
   padding: 1rem;
   background-color: #fff;
   color: #558cba;
@@ -79,7 +79,8 @@
 
 .feeddata {
   margin-top: 10px;
-  max-height: 50vh;
+  /* width: 100%; */
+  /* min-height: 50vh; */
   overflow-y: hidden;
   scrollbar-width: none;
   scrollbar-color: #558cba #f0f0f0;
@@ -211,14 +212,14 @@
 
 /* Grid2 */
 .grid2 {
-  max-width: 500px;
+  max-width: 570px;
   gap: 1rem;
 }
 
 /* Matrix */
 .matrix1, .matrix2 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
 
@@ -229,6 +230,7 @@
   max-width: 280px;
   /* Ensure proper height to accommodate all content */
   min-height: 300px;
+  max-height: 350px ;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -241,7 +243,7 @@
   flex-direction: column;
   justify-content: space-between;
   /* Prevent text overflow */
-  min-height: 0;
+  min-width: 0;
   overflow: hidden;
   line-clamp: 1; /* Limit to 3 lines */
   -webkit-line-clamp: 1; /* For WebKit browsers */
@@ -274,7 +276,7 @@
 /* Arrow buttons */
 .arrow {
   position: absolute;
-  top: 50%;
+  top: 200px;
   transform: translateY(-50%);
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.212);

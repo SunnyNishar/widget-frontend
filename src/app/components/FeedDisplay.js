@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState, useRef } from "react";
 import Styles from "./feeddisplay.module.css";
 import { IoIosSend } from "react-icons/io";
@@ -13,35 +14,138 @@ export default function FeedDisplay({
   editMode = false,
   currentWidgetId = null,
 }) {
-  const { fontStyle, textAlign, border, borderColor } = customSettings;
+  const {
+    fontStyle,
+    textAlign,
+    border,
+    borderColor,
+    widthType,
+    widthPixels,
+    heightType,
+    heightPixels,
+    heightPosts,
+    autoScroll,
+  } = customSettings;
 
+  const [feeds, setFeeds] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef(null);
+  const autoScrollIntervalRef = useRef(null);
+
+  // Calculate the actual width to use for the main container
+  const getContainerWidth = () => {
+    if (widthType === "pixels") {
+      return `${widthPixels}px`;
+    }
+    return "100%"; // Responsive
+  };
+
+  // Calculate the actual height for the feeddata container
+  const getFeedDataHeight = () => {
+    if (heightType === "pixels") {
+      return `${heightPixels}px`;
+    }
+    return "auto"; // For posts, let it be auto height
+  };
+
+  // Style for the main container
+  const containerStyle = {};
+
+  // Style for the feeddata container (where height should be applied)
+  const feedDataStyle = {
+    height: getFeedDataHeight(),
+    maxHeight: heightType === "pixels" ? `${heightPixels}px` : "50vh",
+    overflowY: "auto", // Always allow scrolling for autoscroll to work
+  };
+
+  // Style for individual feed items
   const feedStyle = {
     fontFamily: fontStyle,
     textAlign: textAlign,
     border: border ? `1px solid ${borderColor}` : "none",
     padding: "1rem",
     borderRadius: "8px",
+    width: widthType === "pixels" ? `${widthPixels}px` : "100%",
   };
-
-  const [feeds, setFeeds] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
-  const scrollRef = useRef(null);
 
   const defaultSettings = {
     fontStyle: "Arial",
     textAlign: "left",
     border: false,
     borderColor: "#000000",
+    widthType: "responsive",
+    widthPixels: 350,
+    heightType: "posts",
+    heightPixels: 400,
+    heightPosts: 3,
+    autoScroll: false,
   };
 
+  // Auto-scroll functionality
+  const startAutoScroll = () => {
+    if (!autoScroll || !scrollRef.current) return;
+
+    autoScrollIntervalRef.current = setInterval(() => {
+      if (!scrollRef.current) return;
+
+      const container = scrollRef.current;
+      const isCardLayout = layout === "card1" || layout === "card2";
+
+      if (isCardLayout) {
+        // For card layouts, scroll horizontally
+        const cardWidth = 280;
+        const gap = 16;
+        const scrollAmount = cardWidth + gap;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        if (container.scrollLeft >= maxScroll) {
+          // Reset to beginning when reached the end
+          container.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          // Scroll to next card
+          container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        }
+      } else {
+        // For other layouts, scroll vertically
+        const scrollAmount = 100; // Scroll 100px at a time
+        const maxScroll = container.scrollHeight - container.clientHeight;
+
+        if (container.scrollTop >= maxScroll) {
+          // Reset to top when reached the bottom
+          container.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          // Scroll down
+          container.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        }
+      }
+    }, 3000); // Scroll every 3 seconds
+  };
+
+  const stopAutoScroll = () => {
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
+  };
+
+  // Start/stop autoscroll based on settings
   useEffect(() => {
-    // Don't fetch if no folderId or feedUrl
+    if (autoScroll && feeds.length > 0) {
+      startAutoScroll();
+    } else {
+      stopAutoScroll();
+    }
+
+    return () => stopAutoScroll();
+  }, [autoScroll, feeds.length, layout]);
+
+  // Fetch feeds
+  useEffect(() => {
     if (!folderId && !feedUrl) {
       setFeeds([]);
       return;
     }
 
-    // Start loading
     setIsLoading(true);
 
     let url = "";
@@ -57,23 +161,21 @@ export default function FeedDisplay({
       .then((res) => res.json())
       .then((data) => {
         setFeeds(data);
-        setIsLoading(false); // Stop loading on success
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error("Failed to fetch feeds:", err);
         alert("Failed to fetch feeds. Please try again.");
         setFeeds([]);
-        setIsLoading(false); // Stop loading on error
+        setIsLoading(false);
       });
   }, [folderId, feedUrl]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      // Calculate the exact width of one card plus gap
-      const cardWidth = 280; // min-width of card
-      const gap = 16; // 1rem gap
+      const cardWidth = 280;
+      const gap = 16;
       const scrollAmount = cardWidth + gap;
-
       scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   };
@@ -83,7 +185,6 @@ export default function FeedDisplay({
       const cardWidth = 280;
       const gap = 16;
       const scrollAmount = cardWidth + gap;
-
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
@@ -101,7 +202,7 @@ export default function FeedDisplay({
 
     if ((!folderId && !feedUrl) || !widgetName.trim()) {
       alert(
-        "Please enter a widget name and either select a folder or provide an RSS URL."
+        "Please enter a widget name and either select a folder or enter a feed URL."
       );
       return;
     }
@@ -113,20 +214,28 @@ export default function FeedDisplay({
 
     const payload = {
       widgetName: widgetName.trim(),
-      fontStyle,
-      textAlign,
-      addBorder: border,
-      borderColor,
       layout,
       folderId: folderId || null,
       rssUrl: feedUrl || null,
+      customSettings: {
+        fontStyle,
+        textAlign,
+        border,
+        borderColor,
+        widthType,
+        widthPixels,
+        heightType,
+        heightPixels,
+        heightPosts,
+        autoScroll,
+      },
     };
 
     if (editMode) {
       payload.widgetId = currentWidgetId;
     }
 
-    console.log("Saving widget with payload:", payload); // debug line
+    console.log("Saving widget with payload:", payload);
 
     try {
       const endpoint = editMode ? "updateWidget.php" : "saveWidget.php";
@@ -177,7 +286,6 @@ export default function FeedDisplay({
     setWidgetName("");
   };
 
-  // Loading indicator component
   const LoadingIndicator = () => (
     <div className={Styles.loadingContainer}>
       <div className={Styles.spinner}></div>
@@ -185,10 +293,24 @@ export default function FeedDisplay({
     </div>
   );
 
+  // Limit feeds based on heightPosts setting
+  const getDisplayFeeds = () => {
+    if (heightType === "posts" && Array.isArray(feeds)) {
+      return feeds.slice(0, heightPosts);
+    }
+    return feeds;
+  };
+
   return (
-    <div className={Styles.container}>
+    <div className={Styles.container} style={containerStyle}>
       <div className={Styles.heading}>
         <h2>Feed Preview {editMode && "(Edit Mode)"}</h2>
+        {autoScroll && (
+          <div className={Styles.autoScrollIndicator}>
+            <span className={Styles.autoScrollDot}></span>
+            <small>Auto-scrolling</small>
+          </div>
+        )}
       </div>
       <div className={Styles.row}>
         <div className={Styles.widgetentry}>
@@ -219,7 +341,7 @@ export default function FeedDisplay({
         </div>
       </div>
 
-      <div className={isCardLayout ? Styles.cardWrapper : Styles}>
+      <div className={isCardLayout ? Styles.cardWrapper : ""}>
         {isCardLayout && (
           <>
             <button
@@ -237,17 +359,19 @@ export default function FeedDisplay({
           </>
         )}
 
+        {/* Apply height style to the feeddata container */}
         <div
-          ref={isCardLayout ? scrollRef : null}
-          className={`${Styles.feeddata} ${Styles[layout]}`}
+          ref={scrollRef}
+          className={`${Styles.feeddata} ${Styles[layout]} ${
+            autoScroll ? Styles.autoScrolling : ""
+          }`}
+          style={feedDataStyle}
         >
-          {/* Show loading indicator when loading */}
           {isLoading && <LoadingIndicator />}
 
-          {/* Show feeds when not loading and feeds exist */}
           {!isLoading &&
             Array.isArray(feeds) &&
-            feeds.map((feed, index) => (
+            getDisplayFeeds().map((feed, index) => (
               <div
                 key={`feed-${index}`}
                 className={Styles.feedItem}
@@ -261,7 +385,7 @@ export default function FeedDisplay({
                         : `${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`
                     }
                     className={Styles.feedImage}
-                    // alt={feed.title}
+                    alt={feed.title || "Feed image"}
                   />
                 )}
                 <div className={Styles.feedText}>
@@ -280,7 +404,6 @@ export default function FeedDisplay({
               </div>
             ))}
 
-          {/* Show message when not loading and no feeds */}
           {!isLoading && (!feeds || feeds.length === 0) && (
             <div className={Styles.noFeedsMessage}>
               <p>

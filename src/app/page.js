@@ -29,6 +29,12 @@ export default function Home() {
     textAlign: "left",
     border: false,
     borderColor: "#000000",
+    widthType: "responsive",
+    widthPixels: 350,
+    heightType: "pixels",
+    heightPixels: 350,
+    heightPosts: 3, // Default to showing 3 posts
+    autoScroll: false, // Default to no auto-scroll
   });
   const [widgetName, setWidgetName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,15 +67,28 @@ export default function Home() {
               else if (widget.layout.startsWith("card")) setView("card");
               else if (widget.layout.startsWith("matrix")) setView("matrix");
             }
-
+            // Handle both old and new width format
+            const widthValue = widget.width || widget.widthPixels || 350;
+            const isPixelWidth =
+              widget.widthType === "pixels" ||
+              (widget.width && widget.width.includes("px"));
+            const settings = widget.settings;
+            console.log("Widget from backend:", widget);
+            console.log("Parsed settings:", settings);
             setCustomSettings({
-              fontStyle: widget.font_style || "Arial",
-              textAlign: widget.text_align || "left",
+              fontStyle: widget.fontStyle || "Arial",
+              textAlign: widget.textAlign || "left",
               border:
-                widget.add_border == 1 ||
-                widget.add_border === true ||
-                widget.add_border === "1",
-              borderColor: widget.border_color || "#000000",
+                widget.border === true ||
+                widget.border === 1 ||
+                widget.border === "1",
+              borderColor: widget.borderColor || "#000000",
+              widthType: widget.widthType || "responsive",
+              widthPixels: widget.widthPixels || 350,
+              heightType: widget.heightType || "pixels",
+              heightPixels: widget.heightPixels || 350,
+              heightPosts: widget.heightPosts || 3,
+              autoScroll: widget.autoScroll || false,
             });
           } else {
             alert("Failed to load widget data");
