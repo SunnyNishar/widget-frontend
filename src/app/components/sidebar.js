@@ -7,12 +7,26 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { SlUser } from "react-icons/sl";
+import Link from "next/link";
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [email, setEmail] = useState("");
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    // Check if sidebar has been animated before in this session
+    const sidebarAnimated = sessionStorage.getItem("sidebarAnimated");
+    if (sidebarAnimated === "true") {
+      setHasAnimated(true);
+    } else {
+      // Mark as animated and store in sessionStorage
+      sessionStorage.setItem("sidebarAnimated", "true");
+      setHasAnimated(true);
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -32,6 +46,8 @@ export default function Sidebar() {
     setIsLoggingOut(true);
     setTimeout(() => {
       localStorage.removeItem("token");
+      // Reset animation state on logout so it animates again for new user
+      sessionStorage.removeItem("sidebarAnimated");
       router.push("/login");
     }, 1000);
   };
@@ -70,12 +86,14 @@ export default function Sidebar() {
             key={item.name}
             className={pathname === item.href ? styles.active : ""}
             variants={itemVariants}
-            initial="hidden"
+            initial={hasAnimated ? false : "hidden"}
             animate="visible"
-            transition={{ delay: index * 0.1 }}
+            transition={{
+              delay: hasAnimated ? 0 : index * 0.1,
+            }}
           >
             {item.clickable ? (
-              <a href={item.href}>{item.name}</a>
+              <Link href={item.href}>{item.name}</Link>
             ) : (
               <span>{item.name}</span>
             )}
@@ -84,18 +102,15 @@ export default function Sidebar() {
         {email && (
           <motion.div
             className={styles.userInfo}
-            initial={{ opacity: 0, x: -20 }}
+            initial={
+              hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }
+            }
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: (menuItems.length - 1) * 0.1 }}
+            transition={{
+              delay: hasAnimated ? 0 : (menuItems.length - 1) * 0.1,
+            }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              {/* <img
-                src="/user-icon.png"
-                alt="User Icon"
-                width={24}
-                height={24}
-                style={{ borderRadius: "50%" }}
-              /> */}
               <SlUser width={24} height={24} />
               <span>{email}</span>
             </div>
@@ -108,9 +123,11 @@ export default function Sidebar() {
           disabled={isLoggingOut}
           type="button"
           className={styles.logoutButton}
-          initial={{ opacity: 0, x: -20 }}
+          initial={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: (menuItems.length - 1) * 0.1 }}
+          transition={{
+            delay: hasAnimated ? 0 : (menuItems.length - 1) * 0.1,
+          }}
           title="Logout"
         >
           {isLoggingOut ? (

@@ -9,7 +9,7 @@
 .header {
   margin: 0;
   margin-bottom: 20px;
-  padding: 1vh;
+  padding: 10px;
   background-color: #e9e9e9;
   color: #558cba;
   border: 1px solid #d9d9d9;
@@ -133,8 +133,8 @@
   gap: 5px;
 } */
 .section {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  /* margin-bottom: 24px; */
+  /* padding-bottom: 16px; */
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -167,11 +167,12 @@
   width: 16px;
   height: 16px;
   margin: 0;
+  cursor: pointer;
 }
 
 .radioText {
   flex: 1;
-  color: #333;
+  color: #000000;
 }
 
 .helpIcon {
@@ -224,24 +225,28 @@
 .numberInput {
   width: 80px;
   padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 14px;
-}
-.numberInput {
-  width: 80px;
-  padding: 6px 8px;
+  color: black;
+  background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   text-align: center;
   font-size: 14px;
 }
 
+.textInput {
+ width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+}
+
 .toggleGroup {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .toggleLabel {
@@ -297,7 +302,7 @@
 }
 
 .switchInput:checked + .slider {
-  background-color: #2196f3;
+  background-color: #558cba;
 }
 
 .switchInput:checked + .slider:before {

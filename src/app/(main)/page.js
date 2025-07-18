@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import FeedDisplay from "./components/FeedDisplay";
-import Sidebar from "./components/sidebar";
-import WidgetForm from "./components/widegtform";
+import FeedDisplay from "../components/FeedDisplay";
+import WidgetForm from "../components/widegtform";
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 
@@ -35,6 +34,20 @@ export default function Home() {
     heightPixels: 350,
     heightPosts: 3, // Default to showing 3 posts
     autoScroll: false, // Default to no auto-scroll
+    useCustomTitle: false, // Default to not using custom title
+    mainTitle: "", // Default title
+    titleFontSize: 16, // Default title font size
+    titleBold: true, // Default title bold
+    titleFontColor: "#6d8cd1", // Default title font color
+    titleBgColor: "#ffffff", // Default title background color
+    useCustomContent: false, // Default to not using custom content
+    showFeedTitle: true, // Default to showing feed title
+    showFeedDescription: true, // Default to showing feed description
+    showFeedDate: true, // Default to showing feed date
+    feedTitleBold: false, // Default to not bolding feed title
+    feedDescriptionBold: false, // Default to not bolding feed description
+    feedTitleFontColor: "#6d8cd1", // Default feed title font color
+    feedTitleFontSize: 16, // Default feed title font size
   });
   const [widgetName, setWidgetName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +102,20 @@ export default function Home() {
               heightPixels: widget.heightPixels || 350,
               heightPosts: widget.heightPosts || 3,
               autoScroll: widget.autoScroll || false,
+              useCustomTitle: widget.useCustomTitle || false,
+              mainTitle: widget.mainTitle || "",
+              titleFontSize: widget.titleFontSize || 16,
+              titleBold: widget.titleBold ?? false,
+              titleFontColor: widget.titleFontColor || "#0080ff",
+              titleBgColor: widget.titleBgColor || "#ffffff",
+              useCustomContent: widget.useCustomContent || false,
+              showFeedTitle: widget.showFeedTitle ?? true,
+              showFeedDescription: widget.showFeedDescription ?? true,
+              showFeedDate: widget.showFeedDate ?? true,
+              feedTitleBold: widget.feedTitleBold ?? false,
+              feedDescriptionBold: widget.feedDescriptionBold ?? false,
+              feedTitleFontColor: widget.feedTitleFontColor || "#6d8cd1",
+              feedTitleFontSize: widget.feedTitleFontSize || 16,
             });
           } else {
             alert("Failed to load widget data");
@@ -123,7 +150,7 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className={styles.contentWrapper}>
         <div className={styles.formSection}>
           <WidgetForm

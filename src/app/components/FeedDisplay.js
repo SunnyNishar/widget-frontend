@@ -25,27 +25,67 @@ export default function FeedDisplay({
     heightPixels,
     heightPosts,
     autoScroll,
+    useCustomTitle,
+    mainTitle,
+    titleFontSize,
+    titleBold,
+    titleFontColor,
+    titleBgColor,
+    useCustomContent,
+    showFeedTitle,
+    showFeedDescription,
+    showFeedDate,
+    feedTitleBold,
+    feedDescriptionBold,
+    feedTitleFontColor,
+    feedTitleFontSize,
   } = customSettings;
 
   const [feeds, setFeeds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef(null);
   const autoScrollIntervalRef = useRef(null);
+  const [feedItemHeight, setFeedItemHeight] = useState(120); // Default fallback
+  const feedItemRef = useRef(null);
+  const measurementDoneRef = useRef(false);
 
-  // Calculate the actual width to use for the main container
-  const getContainerWidth = () => {
-    if (widthType === "pixels") {
-      return `${widthPixels}px`;
+  const measureFeedItemHeight = () => {
+    if (
+      feedItemRef.current &&
+      feeds.length > 0 &&
+      !measurementDoneRef.current
+    ) {
+      const firstFeedItem = feedItemRef.current;
+      const itemHeight = firstFeedItem.offsetHeight;
+      const itemMarginTop =
+        parseInt(window.getComputedStyle(firstFeedItem).marginTop) || 0;
+      const itemMarginBottom =
+        parseInt(window.getComputedStyle(firstFeedItem).marginBottom) || 0;
+
+      const totalItemHeight = itemHeight + itemMarginTop + itemMarginBottom;
+
+      console.log("Measured feed item height:", totalItemHeight);
+      setFeedItemHeight(totalItemHeight);
+      measurementDoneRef.current = true;
     }
-    return "100%"; // Responsive
   };
+
+  useEffect(() => {
+    if (feeds.length > 0) {
+      measurementDoneRef.current = false;
+      setTimeout(measureFeedItemHeight, 100);
+    }
+  }, [feeds, layout]);
 
   // Calculate the actual height for the feeddata container
   const getFeedDataHeight = () => {
     if (heightType === "pixels") {
       return `${heightPixels}px`;
+    } else if (heightType === "posts") {
+      const calculatedHeight = heightPosts * feedItemHeight;
+      return `${calculatedHeight}px`;
     }
-    return "auto"; // For posts, let it be auto height
+    return "auto";
   };
 
   // Style for the main container
@@ -54,18 +94,33 @@ export default function FeedDisplay({
   // Style for the feeddata container (where height should be applied)
   const feedDataStyle = {
     height: getFeedDataHeight(),
-    maxHeight: heightType === "pixels" ? `${heightPixels}px` : "50vh",
-    overflowY: "auto", // Always allow scrolling for autoscroll to work
+    maxHeight:
+      heightType === "pixels"
+        ? `${heightPixels}px`
+        : heightType === "posts"
+        ? `${heightPosts * feedItemHeight}px`
+        : "50vh",
+    overflowY: "auto",
   };
-
   // Style for individual feed items
   const feedStyle = {
     fontFamily: fontStyle,
     textAlign: textAlign,
-    border: border ? `1px solid ${borderColor}` : "none",
+    border: border ? `1px solid ${borderColor} ` : "none",
     padding: "1rem",
     borderRadius: "8px",
     width: widthType === "pixels" ? `${widthPixels}px` : "100%",
+  };
+  const feedTitleStyle = {
+    fontWeight: customSettings.feedTitleBold ? "bold" : "normal",
+    color: customSettings.feedTitleFontColor || "#000000",
+    fontSize: customSettings.feedTitleFontSize
+      ? `${customSettings.feedTitleFontSize}px`
+      : "16px",
+  };
+
+  const feedDescriptionStyle = {
+    fontWeight: customSettings.feedDescriptionBold ? "bold" : "normal",
   };
 
   const defaultSettings = {
@@ -79,6 +134,20 @@ export default function FeedDisplay({
     heightPixels: 400,
     heightPosts: 3,
     autoScroll: false,
+    useCustomTitle: false,
+    mainTitle: "Sunny",
+    titleFontSize: 16,
+    titleBold: true,
+    titleFontColor: "#6d8cd1",
+    titleBgColor: "#ffffff",
+    useCustomContent: false,
+    showFeedTitle: true,
+    showFeedDescription: true,
+    showFeedDate: true,
+    feedTitleBold: false,
+    feedDescriptionBold: false,
+    feedTitleFontColor: "#6d8cd1",
+    feedTitleFontSize: 16,
   };
 
   // Auto-scroll functionality
@@ -107,7 +176,7 @@ export default function FeedDisplay({
         }
       } else {
         // For other layouts, scroll vertically
-        const scrollAmount = 100; // Scroll 100px at a time
+        const scrollAmount = feedItemHeight; // Scroll 100px at a time
         const maxScroll = container.scrollHeight - container.clientHeight;
 
         if (container.scrollTop >= maxScroll) {
@@ -228,6 +297,20 @@ export default function FeedDisplay({
         heightPixels,
         heightPosts,
         autoScroll,
+        useCustomTitle,
+        mainTitle,
+        titleFontSize,
+        titleBold,
+        titleFontColor,
+        titleBgColor,
+        useCustomContent,
+        showFeedTitle,
+        showFeedDescription,
+        showFeedDate,
+        feedTitleBold,
+        feedDescriptionBold,
+        feedTitleFontColor,
+        feedTitleFontSize,
       },
     };
 
@@ -293,12 +376,8 @@ export default function FeedDisplay({
     </div>
   );
 
-  // Limit feeds based on heightPosts setting
   const getDisplayFeeds = () => {
-    if (heightType === "posts" && Array.isArray(feeds)) {
-      return feeds.slice(0, heightPosts);
-    }
-    return feeds;
+    return Array.isArray(feeds) ? feeds : [];
   };
 
   return (
@@ -340,6 +419,20 @@ export default function FeedDisplay({
           </button>
         </div>
       </div>
+      {customSettings.useCustomTitle && (
+        <div
+          className={Styles.feedTitle}
+          style={{
+            backgroundColor: customSettings.titleBgColor,
+            color: customSettings.titleFontColor,
+            fontWeight: customSettings.titleBold ? "bold" : "normal",
+            fontSize: `${customSettings.titleFontSize}px`,
+            textAlign: "left",
+          }}
+        >
+          {customSettings.mainTitle || "Feed Title"}
+        </div>
+      )}
 
       <div className={isCardLayout ? Styles.cardWrapper : ""}>
         {isCardLayout && (
@@ -374,6 +467,7 @@ export default function FeedDisplay({
             getDisplayFeeds().map((feed, index) => (
               <div
                 key={`feed-${index}`}
+                ref={index === 0 ? feedItemRef : null}
                 className={Styles.feedItem}
                 style={feedStyle}
               >
@@ -389,17 +483,23 @@ export default function FeedDisplay({
                   />
                 )}
                 <div className={Styles.feedText}>
-                  <h4>
-                    <a
-                      href={feed.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {feed.title}
-                    </a>
-                  </h4>
-                  <p>{feed.description}</p>
-                  <small>{feed.date}</small>
+                  {customSettings.showFeedTitle && (
+                    <h4 style={feedTitleStyle}>
+                      <a
+                        href={feed.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {feed.title}
+                      </a>
+                    </h4>
+                  )}
+
+                  {customSettings.showFeedDescription && (
+                    <p style={feedDescriptionStyle}>{feed.description}</p>
+                  )}
+
+                  {customSettings.showFeedDate && <small>{feed.date}</small>}
                 </div>
               </div>
             ))}

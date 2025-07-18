@@ -78,7 +78,7 @@
 }
 
 .feeddata {
-  margin-top: 10px;
+  margin-top: 5px;
   /* width: 100%; */
   /* min-height: 50vh; */
   overflow-y: hidden;
@@ -294,4 +294,16 @@
 
 .right {
   right: 0;
+}
+.feedTitle {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: inherit;
+  /* Add these properties to ensure proper positioning */
+  width: 100%;
+  display: block;
+  clear: both;
+  margin-top: 1rem;
 }

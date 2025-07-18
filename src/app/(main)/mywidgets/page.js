@@ -2,11 +2,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import Sidebar from "../components/sidebar";
 import Styles from "./mywidgets.module.css";
 import Modal from "react-modal";
 import Link from "next/link";
-import { isTokenExpired } from "../../utils/auth";
+import { isTokenExpired } from "../../../utils/auth";
 
 export default function MyWidgetsPage() {
   const [widgets, setWidgets] = useState([]);
@@ -149,7 +148,7 @@ export default function MyWidgetsPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className={Styles.main}>
         <h1 className={Styles.heading}>My Widgets</h1>
 
