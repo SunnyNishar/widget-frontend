@@ -1,6 +1,6 @@
 .container {
   width: auto;
-  padding: 1rem;
+  /* padding: 1px; */
   background-color: #fff;
   color: #558cba;
 }
@@ -9,7 +9,8 @@
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  margin: 1rem 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   align-items: flex-end;
 }
 
@@ -78,12 +79,13 @@
 }
 
 .feeddata {
-  margin-top: 5px;
+  /* margin-top: 5px; */
   /* width: 100%; */
   /* min-height: 50vh; */
   overflow-y: hidden;
   scrollbar-width: none;
   scrollbar-color: #558cba #f0f0f0;
+  background-color: blue;
 }
 
 .feeddata:hover {
@@ -128,7 +130,7 @@
 .feedItem {
   padding: 1rem;
   margin-bottom: 1rem;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   border-radius: 8px;
   background: #fff;
   /* Add proper text wrapping */
@@ -136,6 +138,7 @@
   overflow-wrap: break-word;
   hyphens: auto;
 }
+
 
 .feedItem img,
 .feedImage {
@@ -234,6 +237,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .card1 .feedText,
@@ -252,6 +256,7 @@
 .cardWrapper {
   position: relative;
   width: 300px;
+  box-sizing: border-box;
 }
 
 .card1,
@@ -266,6 +271,7 @@
   max-width: 300px;
   margin: auto;
   scrollbar-width: none;
+  box-sizing: border-box;
 }
 
 /* .card1::-webkit-scrollbar,
@@ -295,15 +301,45 @@
 .right {
   right: 0;
 }
+
+/* Feed title styling */
 .feedTitle {
   padding: 0.5rem 1rem;
-  border-radius: 6px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-family: inherit;
-  /* Add these properties to ensure proper positioning */
   width: 100%;
   display: block;
   clear: both;
-  margin-top: 1rem;
+  position: sticky;
+  top: 0;
+}
+
+/* Special handling for card layouts - restructure to column layout */
+.card1,
+.card2 {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 300px;
+  margin: auto;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+/* When card layout has a title, restructure the container */
+.cardLayoutWithTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardLayoutWithTitle .feedTitle {
+  position: static;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
 }

@@ -13,6 +13,7 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
     heightPixels = 400,
     heightPosts = 3,
     autoScroll = true,
+    backgroundColor,
   } = customSettings;
   const handleWidthTypeChange = (type) => {
     onSettingsChange({ ...customSettings, widthType: type });
@@ -553,6 +554,21 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
                         onSettingsChange({
                           ...customSettings,
                           feedTitleFontColor: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  {/* Feed Content Background Color */}
+                  <div className={styles.formGroup}>
+                    <label>Background</label>
+                    <input
+                      type="color"
+                      value={customSettings.backgroundColor || "#ffffffff"}
+                      onChange={(e) =>
+                        onSettingsChange({
+                          ...customSettings,
+                          backgroundColor: e.target.value,
                         })
                       }
                     />

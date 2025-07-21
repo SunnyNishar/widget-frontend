@@ -1,0 +1,62 @@
+.headerWrapper {
+  padding: 2rem;
+  background-color: white;
+  color: black;
+  text-align: center;
+}
+.leftColumn a{
+    color: #558cba;
+    text-decoration: none;
+}
+
+.leftColumn a:hover {
+  text-decoration: underline;
+}
+
+.rightColumn a {
+  color: #558cba;
+  text-decoration: none;
+}
+
+.rightColumn a:hover {
+  text-decoration: underline;
+}
+.title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.columns {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.leftColumn {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  font-size: large;
+  text-align: justify;
+}
+
+.rightColumn {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.rightColumn p {
+  margin-bottom: 1rem;
+}

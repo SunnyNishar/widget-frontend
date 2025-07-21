@@ -13,6 +13,7 @@ export default function FeedDisplay({
   setWidgetName,
   editMode = false,
   currentWidgetId = null,
+  embedMode = false,
 }) {
   const {
     fontStyle,
@@ -39,6 +40,7 @@ export default function FeedDisplay({
     feedDescriptionBold,
     feedTitleFontColor,
     feedTitleFontSize,
+    backgroundColor,
   } = customSettings;
 
   const [feeds, setFeeds] = useState([]);
@@ -101,15 +103,17 @@ export default function FeedDisplay({
         ? `${heightPosts * feedItemHeight}px`
         : "50vh",
     overflowY: "auto",
+    backgroundColor: backgroundColor || "#ffffff",
+    border: border ? `2px solid ${borderColor} ` : "none",
   };
   // Style for individual feed items
   const feedStyle = {
     fontFamily: fontStyle,
     textAlign: textAlign,
-    border: border ? `1px solid ${borderColor} ` : "none",
     padding: "1rem",
     borderRadius: "8px",
     width: widthType === "pixels" ? `${widthPixels}px` : "100%",
+    backgroundColor: backgroundColor || "#ffffff",
   };
   const feedTitleStyle = {
     fontWeight: customSettings.feedTitleBold ? "bold" : "normal",
@@ -130,7 +134,7 @@ export default function FeedDisplay({
     borderColor: "#000000",
     widthType: "responsive",
     widthPixels: 350,
-    heightType: "posts",
+    heightType: "pixels",
     heightPixels: 400,
     heightPosts: 3,
     autoScroll: false,
@@ -148,6 +152,7 @@ export default function FeedDisplay({
     feedDescriptionBold: false,
     feedTitleFontColor: "#6d8cd1",
     feedTitleFontSize: 16,
+    backgroundColor: "#ffffff",
   };
 
   // Auto-scroll functionality
@@ -311,6 +316,7 @@ export default function FeedDisplay({
         feedDescriptionBold,
         feedTitleFontColor,
         feedTitleFontSize,
+        backgroundColor,
       },
     };
 
@@ -382,56 +388,47 @@ export default function FeedDisplay({
 
   return (
     <div className={Styles.container} style={containerStyle}>
-      <div className={Styles.heading}>
-        <h2>Feed Preview {editMode && "(Edit Mode)"}</h2>
-        {autoScroll && (
-          <div className={Styles.autoScrollIndicator}>
-            <span className={Styles.autoScrollDot}></span>
-            <small>Auto-scrolling</small>
+      {/* Only show header, widget name input, and buttons if not in embedMode */}
+      {!embedMode && (
+        <>
+          <div className={Styles.heading}>
+            <h2>Feed Preview {editMode && "(Edit Mode)"}</h2>
+            {autoScroll && (
+              <div className={Styles.autoScrollIndicator}>
+                <span className={Styles.autoScrollDot}></span>
+                <small>Auto-scrolling</small>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div className={Styles.row}>
-        <div className={Styles.widgetentry}>
-          <input
-            type="text"
-            placeholder="Enter Widget Name"
-            value={widgetName}
-            required
-            onChange={(e) => setWidgetName(e.target.value)}
-          />
-        </div>
-        <div className={Styles.buttons}>
-          <button
-            className={Styles.button}
-            onClick={handleSave}
-            title={editMode ? "Update Widget" : "Save & Get Code"}
-          >
-            {editMode ? "Update Widget" : "Save & Get Code"}
-            <IoIosSend />
-          </button>
-          <button
-            className={Styles.button2}
-            onClick={handleReset}
-            title="Reset Settings"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-      {customSettings.useCustomTitle && (
-        <div
-          className={Styles.feedTitle}
-          style={{
-            backgroundColor: customSettings.titleBgColor,
-            color: customSettings.titleFontColor,
-            fontWeight: customSettings.titleBold ? "bold" : "normal",
-            fontSize: `${customSettings.titleFontSize}px`,
-            textAlign: "left",
-          }}
-        >
-          {customSettings.mainTitle || "Feed Title"}
-        </div>
+          <div className={Styles.row}>
+            <div className={Styles.widgetentry}>
+              <input
+                type="text"
+                placeholder="Enter Widget Name"
+                value={widgetName}
+                required
+                onChange={(e) => setWidgetName(e.target.value)}
+              />
+            </div>
+            <div className={Styles.buttons}>
+              <button
+                className={Styles.button}
+                onClick={handleSave}
+                title={editMode ? "Update Widget" : "Save & Get Code"}
+              >
+                {editMode ? "Update Widget" : "Save & Get Code"}
+                <IoIosSend />
+              </button>
+              <button
+                className={Styles.button2}
+                onClick={handleReset}
+                title="Reset Settings"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       <div className={isCardLayout ? Styles.cardWrapper : ""}>
@@ -452,65 +449,92 @@ export default function FeedDisplay({
           </>
         )}
 
-        {/* Apply height style to the feeddata container */}
+        {/* Modified structure for proper card layout title positioning */}
         <div
-          ref={scrollRef}
-          className={`${Styles.feeddata} ${Styles[layout]} ${
-            autoScroll ? Styles.autoScrolling : ""
+          className={`${Styles.feeddata} ${
+            isCardLayout && customSettings.useCustomTitle
+              ? Styles.cardLayoutWithTitle
+              : ""
           }`}
           style={feedDataStyle}
         >
           {isLoading && <LoadingIndicator />}
 
-          {!isLoading &&
-            Array.isArray(feeds) &&
-            getDisplayFeeds().map((feed, index) => (
-              <div
-                key={`feed-${index}`}
-                ref={index === 0 ? feedItemRef : null}
-                className={Styles.feedItem}
-                style={feedStyle}
-              >
-                {layout !== "list1" && (
-                  <img
-                    src={
-                      feed.image?.startsWith("http")
-                        ? feed.image
-                        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`
-                    }
-                    className={Styles.feedImage}
-                    alt={feed.title || "Feed image"}
-                  />
-                )}
-                <div className={Styles.feedText}>
-                  {customSettings.showFeedTitle && (
-                    <h4 style={feedTitleStyle}>
-                      <a
-                        href={feed.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {feed.title}
-                      </a>
-                    </h4>
-                  )}
-
-                  {customSettings.showFeedDescription && (
-                    <p style={feedDescriptionStyle}>{feed.description}</p>
-                  )}
-
-                  {customSettings.showFeedDate && <small>{feed.date}</small>}
-                </div>
-              </div>
-            ))}
-
-          {!isLoading && (!feeds || feeds.length === 0) && (
-            <div className={Styles.noFeedsMessage}>
-              <p>
-                No feeds available. Please select a folder or enter a feed URL.
-              </p>
+          {/* Custom title - positioned outside horizontal scroll for card layouts */}
+          {customSettings.useCustomTitle && (
+            <div
+              className={Styles.feedTitle}
+              style={{
+                backgroundColor: customSettings.titleBgColor,
+                color: customSettings.titleFontColor,
+                fontWeight: customSettings.titleBold ? "bold" : "normal",
+                fontSize: `${customSettings.titleFontSize}px`,
+                textAlign: "left",
+                borderBottom: "1px solid #989191e4",
+              }}
+            >
+              {customSettings.mainTitle || "Feed Title"}
             </div>
           )}
+
+          {/* Feed items container */}
+          <div
+            ref={scrollRef}
+            className={`${Styles[layout]} ${
+              autoScroll ? Styles.autoScrolling : ""
+            }`}
+          >
+            {!isLoading &&
+              Array.isArray(feeds) &&
+              getDisplayFeeds().map((feed, index) => (
+                <div
+                  key={`feed-${index}`}
+                  ref={index === 0 ? feedItemRef : null}
+                  className={Styles.feedItem}
+                  style={feedStyle}
+                >
+                  {layout !== "list1" && (
+                    <img
+                      src={
+                        feed.image?.startsWith("http")
+                          ? feed.image
+                          : `${process.env.NEXT_PUBLIC_API_BASE_URL}/${feed.image_url}`
+                      }
+                      className={Styles.feedImage}
+                      alt={feed.title || "Feed image"}
+                    />
+                  )}
+                  <div className={Styles.feedText}>
+                    {customSettings.showFeedTitle && (
+                      <h4 style={feedTitleStyle}>
+                        <a
+                          href={feed.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {feed.title}
+                        </a>
+                      </h4>
+                    )}
+
+                    {customSettings.showFeedDescription && (
+                      <p style={feedDescriptionStyle}>{feed.description}</p>
+                    )}
+
+                    {customSettings.showFeedDate && <small>{feed.date}</small>}
+                  </div>
+                </div>
+              ))}
+
+            {!isLoading && (!feeds || feeds.length === 0) && (
+              <div className={Styles.noFeedsMessage}>
+                <p>
+                  No feeds available. Please select a folder or enter a feed
+                  URL.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import FeedDisplay from "../components/FeedDisplay";
 import WidgetForm from "../components/widegtform";
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
+import PageHeader from "../components/pageHeader";
 
 export default function Home() {
   const router = useRouter();
@@ -48,6 +49,7 @@ export default function Home() {
     feedDescriptionBold: false, // Default to not bolding feed description
     feedTitleFontColor: "#6d8cd1", // Default feed title font color
     feedTitleFontSize: 16, // Default feed title font size
+    backgroundColor: "#ffffff",
   });
   const [widgetName, setWidgetName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -116,6 +118,7 @@ export default function Home() {
               feedDescriptionBold: widget.feedDescriptionBold ?? false,
               feedTitleFontColor: widget.feedTitleFontColor || "#6d8cd1",
               feedTitleFontSize: widget.feedTitleFontSize || 16,
+              backgroundColor: widget.backgroundColor || "#ffffff",
             });
           } else {
             alert("Failed to load widget data");
@@ -150,6 +153,7 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
+      <PageHeader />
       {/* <Sidebar /> */}
       <div className={styles.contentWrapper}>
         <div className={styles.formSection}>

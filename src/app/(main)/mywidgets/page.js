@@ -205,7 +205,7 @@ export default function MyWidgetsPage() {
                             type="text"
                             value={editedName}
                             onChange={(e) => setEditedName(e.target.value)}
-                            onBlur={() => handleSave(widget.id)}
+                            // onBlur={() => handleSave(widget.id)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter")
                                 handleSaveWidgetName(widget.id);
@@ -324,13 +324,33 @@ export default function MyWidgetsPage() {
                 </p>
                 <textarea
                   readOnly
-                  value={`<iframe src="http://localhost:3000/embed/${selectedWidget.id}" width="100%" height="400"></iframe>`}
+                  value={`<iframe src="http://localhost:3000/embed/${
+                    selectedWidget.id
+                  }" style="width: ${
+                    selectedWidget.widthType === "pixels"
+                      ? `${selectedWidget.widthPixels}px`
+                      : "570px"
+                  }; height: ${
+                    selectedWidget.heightType === "pixels"
+                      ? `${selectedWidget.heightPixels}px`
+                      : "auto"
+                  }; border: none;" loading="lazy"></iframe>`}
                   style={{ width: "100%", height: "100px", marginTop: "10px" }}
                 />
                 <motion.button
                   onClick={() =>
                     navigator.clipboard.writeText(
-                      `<iframe src="http://localhost:3000/embed/${selectedWidget.id}" width="100%" height="400"></iframe>`
+                      `<iframe src="http://localhost:3000/embed/${
+                        selectedWidget.id
+                      }" style="width: ${
+                        selectedWidget.widthType === "pixels"
+                          ? `${selectedWidget.widthPixels}px`
+                          : "100%"
+                      }; height: ${
+                        selectedWidget.heightType === "pixels"
+                          ? `${selectedWidget.heightPixels}px`
+                          : "auto"
+                      }; border: none;" loading="lazy"></iframe>`
                     )
                   }
                   className={Styles.actionBtn}
