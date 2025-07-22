@@ -82,7 +82,7 @@
   /* margin-top: 5px; */
   /* width: 100%; */
   /* min-height: 50vh; */
-  overflow-y: hidden;
+  overflow-y: auto;
   scrollbar-width: none;
   scrollbar-color: #558cba #f0f0f0;
   background-color: blue;
@@ -215,7 +215,7 @@
 
 /* Grid2 */
 .grid2 {
-  max-width: 570px;
+  /* max-width: 570px; */
   gap: 1rem;
 }
 

@@ -35,10 +35,13 @@ export default function EmbedWidgetPage() {
     <div
       style={{
         background: "#fff",
-        width: `${widgetData.widthPixels || 350}px`,
+        width:
+          widgetData.widthType === "pixels"
+            ? `${widgetData.widthPixels || 350}px`
+            : "100%",
         padding: 0,
         margin: 0,
-        overflow: "hidden",
+        // overflow: "hidden",
       }}
     >
       <FeedDisplay

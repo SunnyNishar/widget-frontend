@@ -345,11 +345,13 @@ export default function MyWidgetsPage() {
                       }" style="width: ${
                         selectedWidget.widthType === "pixels"
                           ? `${selectedWidget.widthPixels}px`
-                          : "100%"
+                          : "570px"
                       }; height: ${
                         selectedWidget.heightType === "pixels"
                           ? `${selectedWidget.heightPixels}px`
-                          : "auto"
+                          : selectedWidget.heightType === "auto"
+                          ? "auto"
+                          : "100%" // for heightType=posts
                       }; border: none;" loading="lazy"></iframe>`
                     )
                   }

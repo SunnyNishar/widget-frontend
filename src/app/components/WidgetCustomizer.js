@@ -76,7 +76,7 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
                     )
                   }
                   className={styles.numberInput}
-                  min="50"
+                  min="100"
                   max="1000"
                 />
                 <button
@@ -256,7 +256,7 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
         <div className={styles.formGroup}>
           <label>Text Alignment</label>
           <div className={styles.alignment}>
-            {["left", "center", "right"].map((align) => (
+            {["left", "center", "right", "justify"].map((align) => (
               <button
                 key={align}
                 className={`${styles.alignButton} ${

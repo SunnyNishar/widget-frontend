@@ -79,7 +79,6 @@ export default function FeedDisplay({
     }
   }, [feeds, layout]);
 
-  // Calculate the actual height for the feeddata container
   const getFeedDataHeight = () => {
     if (heightType === "pixels") {
       return `${heightPixels}px`;
@@ -104,7 +103,6 @@ export default function FeedDisplay({
         : "50vh",
     overflowY: "auto",
     backgroundColor: backgroundColor || "#ffffff",
-    border: border ? `2px solid ${borderColor} ` : "none",
   };
   // Style for individual feed items
   const feedStyle = {
@@ -112,8 +110,13 @@ export default function FeedDisplay({
     textAlign: textAlign,
     padding: "1rem",
     borderRadius: "8px",
-    width: widthType === "pixels" ? `${widthPixels}px` : "100%",
+    width: "100%",
     backgroundColor: backgroundColor || "#ffffff",
+  };
+  const wrapperStyle = {
+    width: widthType === "pixels" ? `${widthPixels}px` : "100%",
+    border: border ? `2px solid ${borderColor} ` : "none",
+    // margin: "0 auto",
   };
   const feedTitleStyle = {
     fontWeight: customSettings.feedTitleBold ? "bold" : "normal",
@@ -164,14 +167,12 @@ export default function FeedDisplay({
 
       const container = scrollRef.current;
       const isCardLayout = layout === "card1" || layout === "card2";
-
       if (isCardLayout) {
         // For card layouts, scroll horizontally
         const cardWidth = 280;
         const gap = 16;
         const scrollAmount = cardWidth + gap;
         const maxScroll = container.scrollWidth - container.clientWidth;
-
         if (container.scrollLeft >= maxScroll) {
           // Reset to beginning when reached the end
           container.scrollTo({ left: 0, behavior: "smooth" });
@@ -184,11 +185,15 @@ export default function FeedDisplay({
         const scrollAmount = feedItemHeight; // Scroll 100px at a time
         const maxScroll = container.scrollHeight - container.clientHeight;
 
-        if (container.scrollTop >= maxScroll) {
-          // Reset to top when reached the bottom
+        const isNearBottom =
+          container.scrollHeight -
+            container.scrollTop -
+            container.clientHeight <
+          5;
+
+        if (isNearBottom) {
           container.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-          // Scroll down
           container.scrollBy({ top: scrollAmount, behavior: "smooth" });
         }
       }
@@ -448,19 +453,7 @@ export default function FeedDisplay({
             </button>
           </>
         )}
-
-        {/* Modified structure for proper card layout title positioning */}
-        <div
-          className={`${Styles.feeddata} ${
-            isCardLayout && customSettings.useCustomTitle
-              ? Styles.cardLayoutWithTitle
-              : ""
-          }`}
-          style={feedDataStyle}
-        >
-          {isLoading && <LoadingIndicator />}
-
-          {/* Custom title - positioned outside horizontal scroll for card layouts */}
+        <div style={wrapperStyle}>
           {customSettings.useCustomTitle && (
             <div
               className={Styles.feedTitle}
@@ -476,14 +469,16 @@ export default function FeedDisplay({
               {customSettings.mainTitle || "Feed Title"}
             </div>
           )}
-
-          {/* Feed items container */}
+          {/* Apply height style to the feeddata container */}
           <div
             ref={scrollRef}
-            className={`${Styles[layout]} ${
+            className={`${Styles.feeddata} ${Styles[layout]} ${
               autoScroll ? Styles.autoScrolling : ""
             }`}
+            style={{ ...feedDataStyle }}
           >
+            {isLoading && <LoadingIndicator />}
+
             {!isLoading &&
               Array.isArray(feeds) &&
               getDisplayFeeds().map((feed, index) => (
