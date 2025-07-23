@@ -13,7 +13,6 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
     heightPixels = 400,
     heightPosts = 3,
     autoScroll = true,
-    backgroundColor,
   } = customSettings;
   const handleWidthTypeChange = (type) => {
     onSettingsChange({ ...customSettings, widthType: type });
@@ -358,7 +357,7 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
                       onSettingsChange({
                         ...customSettings,
                         titleFontSize: Math.max(
-                          10,
+                          1,
                           (customSettings.titleFontSize || 16) - 1
                         ),
                       })

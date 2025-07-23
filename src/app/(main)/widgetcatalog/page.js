@@ -80,74 +80,76 @@ export default function WidgetCatalogPage() {
   };
 
   return (
-    <motion.div
-      className={Styles.wrapper}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      {/* <Sidebar /> */}
-      <div className={Styles.main}>
-        <h1 className={Styles.heading}>Widget Catalog</h1>
+    <>
+      <motion.div
+        className={Styles.wrapper}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* <Sidebar /> */}
+        <div className={Styles.main}>
+          <h1 className={Styles.heading}>Widget Catalog</h1>
 
-        {isLoading ? (
-          <div className={Styles.loader}>Loading...</div>
-        ) : (
-          <>
-            {/* Featured Categories Grid */}
-            <div className={Styles.featuredGrid}>
-              <AnimatePresence>
-                {featuredCategories.map((category, index) => (
-                  <motion.div
-                    key={category.id}
-                    className={Styles.categoryCard}
-                    onClick={() => handleCategoryClick(category)}
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <div className={Styles.categoryImage}>
-                      <img src={category.image} alt={category.title} />
-                      <div className={Styles.categoryOverlay}>
-                        <h3>{category.title}</h3>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            {/* Browse by Categories Section */}
-            <div className={Styles.browseSection}>
-              <h2>Browse Widgets By Categories</h2>
-              <div className={Styles.categoriesList}>
+          {isLoading ? (
+            <div className={Styles.loader}>Loading...</div>
+          ) : (
+            <>
+              {/* Featured Categories Grid */}
+              <div className={Styles.featuredGrid}>
                 <AnimatePresence>
-                  {allCategories.map((category, index) => (
+                  {featuredCategories.map((category, index) => (
                     <motion.div
-                      key={index}
-                      className={Styles.categoryItem}
-                      onClick={() =>
-                        alert("This category has no RSS feed yet.")
-                      }
+                      key={category.id}
+                      className={Styles.categoryCard}
+                      onClick={() => handleCategoryClick(category)}
                       variants={buttonVariants}
                       whileHover="hover"
                       whileTap="tap"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
                     >
-                      <span className={Styles.categoryIcon}>📁</span>
-                      <span className={Styles.categoryName}>{category}</span>
+                      <div className={Styles.categoryImage}>
+                        <img src={category.image} alt={category.title} />
+                        <div className={Styles.categoryOverlay}>
+                          <h3>{category.title}</h3>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
-            </div>
-          </>
-        )}
-      </div>
-    </motion.div>
+
+              {/* Browse by Categories Section */}
+              <div className={Styles.browseSection}>
+                <h2>Browse Widgets By Categories</h2>
+                <div className={Styles.categoriesList}>
+                  <AnimatePresence>
+                    {allCategories.map((category, index) => (
+                      <motion.div
+                        key={index}
+                        className={Styles.categoryItem}
+                        onClick={() =>
+                          alert("This category has no RSS feed yet.")
+                        }
+                        variants={buttonVariants}
+                        whileHover="hover"
+                        whileTap="tap"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <span className={Styles.categoryIcon}>📁</span>
+                        <span className={Styles.categoryName}>{category}</span>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </motion.div>
+    </>
   );
 }

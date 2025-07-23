@@ -1,20 +1,21 @@
 .container {
-  display: flex;
-  flex-direction: column;
   font-family: Arial, sans-serif;
   background: #ffffff;
   margin-left: 250px;
-  height: 100vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
+  margin-top: 60px; /* Account for fixed navbar height */
+  /* scrollbar-width: none; */
+  /* overflow-x: auto; */
+  /* overflow: visible; */
+  height: calc(100vh - 60px);
 }
 
 .contentWrapper {
   display: flex;
   align-items: flex-start;
-  /* min-height: 100vh; */
-  scrollbar-width: none;
+  gap: 0;
+  /* scrollbar-width: none; */
   -ms-overflow-style: none;
+  /* overflow: visible; */
 }
 
 .contentWrapper::-webkit-scrollbar {
@@ -27,6 +28,7 @@
   box-sizing: border-box;
   background: #ffffff;
   border-top: 1px solid #e9e9e9;
+  /* overflow:visible; */
   /* Allow content to extend naturally - no min-height constraint */
 }
 
@@ -42,8 +44,9 @@
 .previewSection {
   width: 50%;
   position: sticky;
-  top: 0;
-  overflow-y: auto;
+  top: 60px; /* Stick below the fixed navbar */
+  height: calc(100vh - 60px); /* Fixed height for sticky to work */
+  overflow-y: auto; /* Allow internal scrolling if content is too long */
   padding: 20px;
   box-sizing: border-box;
   background: #ffffff;
@@ -51,6 +54,9 @@
   border-left: 1px solid #e9e9e9;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* Force hardware acceleration */
+  /* will-change: transform;
+  transform: translateZ(0); */
 }
 /* .formSection:hover,
 .previewSection:hover {

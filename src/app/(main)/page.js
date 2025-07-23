@@ -154,7 +154,6 @@ export default function Home() {
   return (
     <main className={styles.container}>
       <PageHeader />
-      {/* <Sidebar /> */}
       <div className={styles.contentWrapper}>
         <div className={styles.formSection}>
           <WidgetForm
