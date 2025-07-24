@@ -17,6 +17,7 @@ export default function Home() {
     };
     checkAuth();
   }, [router]);
+
   const searchParams = useSearchParams();
   const editWidgetId = searchParams.get("edit");
   const [tempFeedUrl, setTempFeedUrl] = useState("");
@@ -33,22 +34,22 @@ export default function Home() {
     widthPixels: 350,
     heightType: "pixels",
     heightPixels: 350,
-    heightPosts: 3, // Default to showing 3 posts
-    autoScroll: false, // Default to no auto-scroll
-    useCustomTitle: false, // Default to not using custom title
-    mainTitle: "", // Default title
-    titleFontSize: 16, // Default title font size
-    titleBold: true, // Default title bold
-    titleFontColor: "#6d8cd1", // Default title font color
-    titleBgColor: "#ffffff", // Default title background color
-    useCustomContent: false, // Default to not using custom content
-    showFeedTitle: true, // Default to showing feed title
-    showFeedDescription: true, // Default to showing feed description
-    showFeedDate: true, // Default to showing feed date
-    feedTitleBold: false, // Default to not bolding feed title
-    feedDescriptionBold: false, // Default to not bolding feed description
-    feedTitleFontColor: "#6d8cd1", // Default feed title font color
-    feedTitleFontSize: 16, // Default feed title font size
+    heightPosts: 3,
+    autoScroll: false,
+    useCustomTitle: false,
+    mainTitle: "",
+    titleFontSize: 16,
+    titleBold: true,
+    titleFontColor: "#6d8cd1",
+    titleBgColor: "#ffffff",
+    useCustomContent: false,
+    showFeedTitle: true,
+    showFeedDescription: true,
+    showFeedDate: true,
+    feedTitleBold: false,
+    feedDescriptionBold: false,
+    feedTitleFontColor: "#6d8cd1",
+    feedTitleFontSize: 16,
     backgroundColor: "#ffffff",
   });
   const [widgetName, setWidgetName] = useState("");
@@ -71,7 +72,6 @@ export default function Home() {
 
             setFeedUrl(widget.rss_url || "");
             setTempFeedUrl(widget.rss_url || "");
-            // Set all the form states with the widget data
             setSelectedFolderId(widget.folder_id || "");
             setWidgetName(widget.widget_name || "");
             setSelectedLayout(widget.layout || "");
@@ -82,14 +82,11 @@ export default function Home() {
               else if (widget.layout.startsWith("card")) setView("card");
               else if (widget.layout.startsWith("matrix")) setView("matrix");
             }
-            // Handle both old and new width format
-            const widthValue = widget.width || widget.widthPixels || 350;
-            const isPixelWidth =
-              widget.widthType === "pixels" ||
-              (widget.width && widget.width.includes("px"));
+
             const settings = widget.settings;
             console.log("Widget from backend:", widget);
             console.log("Parsed settings:", settings);
+
             setCustomSettings({
               fontStyle: widget.fontStyle || "Arial",
               textAlign: widget.textAlign || "left",
@@ -134,14 +131,23 @@ export default function Home() {
         });
     }
   }, [editWidgetId]);
+
+  // Handle RSS feed from URL parameters (from navbar category selection)
   useEffect(() => {
     const rssFromCategory = searchParams.get("feed");
 
     if (rssFromCategory && !editWidgetId) {
       setFeedUrl(rssFromCategory);
       setTempFeedUrl(rssFromCategory);
+
+      // Reset edit mode if we're loading a new category
+      if (editMode) {
+        setWidgetName("");
+        setEditMode(false);
+        setCurrentWidgetId(null);
+      }
     }
-  }, [searchParams, editWidgetId]);
+  }, [searchParams, editWidgetId, editMode]);
 
   if (isLoading) {
     return (

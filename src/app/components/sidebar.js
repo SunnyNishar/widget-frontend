@@ -15,11 +15,7 @@ export default function Sidebar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [email, setEmail] = useState("");
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
 
-  const toggleSidebar = () => {
-    setCollapsed((prev) => !prev);
-  };
   useEffect(() => {
     // Check if sidebar has been animated before in this session
     const sidebarAnimated = sessionStorage.getItem("sidebarAnimated");
