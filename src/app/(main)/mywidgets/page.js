@@ -304,6 +304,7 @@ export default function MyWidgetsPage() {
         <AnimatePresence>
           {isModalOpen && selectedWidget && (
             <Modal
+              ariaHideApp={false}
               isOpen={isModalOpen}
               onRequestClose={() => setIsModalOpen(false)}
               contentLabel="Embed Code Modal"
@@ -331,10 +332,8 @@ export default function MyWidgetsPage() {
                       ? `${selectedWidget.widthPixels}px`
                       : "570px"
                   }; height: ${
-                    selectedWidget.heightType === "pixels"
-                      ? `${selectedWidget.heightPixels}px`
-                      : "auto"
-                  }; border: none;" loading="lazy"></iframe>`}
+                    selectedWidget.actualHeight || 400
+                  }px; border: none;" loading="lazy"></iframe>`}
                   style={{ width: "100%", height: "100px", marginTop: "10px" }}
                 />
                 <motion.button
@@ -346,13 +345,9 @@ export default function MyWidgetsPage() {
                         selectedWidget.widthType === "pixels"
                           ? `${selectedWidget.widthPixels}px`
                           : "570px"
-                      }; height: ${
-                        selectedWidget.heightType === "pixels"
-                          ? `${selectedWidget.heightPixels}px`
-                          : selectedWidget.heightType === "auto"
-                          ? "auto"
-                          : "100%" // for heightType=posts
-                      }; border: none;" loading="lazy"></iframe>`
+                      };height: ${
+                        selectedWidget.actualHeight || 400
+                      }px; border: none;" loading="lazy"></iframe>`
                     )
                   }
                   className={Styles.actionBtn}

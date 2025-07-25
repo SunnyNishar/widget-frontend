@@ -31,6 +31,11 @@ export default function EmbedWidgetPage() {
   if (isLoading) return <p>Loading widget...</p>;
   if (!widgetData) return <p>Widget not found.</p>;
 
+  const hasBorder =
+    widgetData.border === true ||
+    widgetData.border === 1 ||
+    widgetData.border === "1";
+
   return (
     <div
       style={{
@@ -38,10 +43,12 @@ export default function EmbedWidgetPage() {
         width:
           widgetData.widthType === "pixels"
             ? `${widgetData.widthPixels || 350}px`
-            : "100%",
+            : "100%", // Let FeedDisplay handle the width
+        height: "100%", // Let FeedDisplay handle the height
         padding: 0,
         margin: 0,
-        // overflow: "hidden",
+        overflow: "hidden",
+        // Remove border from here - let FeedDisplay handle it
       }}
     >
       <FeedDisplay
@@ -51,10 +58,7 @@ export default function EmbedWidgetPage() {
         customSettings={{
           fontStyle: widgetData.fontStyle || "Arial",
           textAlign: widgetData.textAlign || "left",
-          border:
-            widgetData.border === true ||
-            widgetData.border === 1 ||
-            widgetData.border === "1",
+          border: hasBorder,
           borderColor: widgetData.borderColor || "#000000",
           widthType: widgetData.widthType || "responsive",
           widthPixels: widgetData.widthPixels || 350,
@@ -82,6 +86,7 @@ export default function EmbedWidgetPage() {
         feedUrl={widgetData.rss_url}
         editMode={false}
         embedMode={true}
+        currentWidgetId={id}
       />
     </div>
   );

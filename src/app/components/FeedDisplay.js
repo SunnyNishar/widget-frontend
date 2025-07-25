@@ -50,6 +50,7 @@ export default function FeedDisplay({
   const [feedItemHeight, setFeedItemHeight] = useState(120); // Default fallback
   const feedItemRef = useRef(null);
   const measurementDoneRef = useRef(false);
+  const titleRef = useRef(null);
 
   const measureFeedItemHeight = () => {
     if (
@@ -89,6 +90,195 @@ export default function FeedDisplay({
     return "auto";
   };
 
+  // Height update useEffect (only for edit mode)
+  useEffect(() => {
+    if (
+      editMode &&
+      currentWidgetId &&
+      feeds.length > 0 &&
+      feedItemHeight > 0 &&
+      measurementDoneRef.current &&
+      process.env.NEXT_PUBLIC_API_BASE_URL
+    ) {
+      const feedContentHeight =
+        heightType === "posts" ? heightPosts * feedItemHeight : heightPixels;
+
+      const titleHeight = titleRef.current?.offsetHeight || 0;
+      const borderThickness = border ? 4 : 0;
+
+      const calculatedHeight = Math.ceil(
+        feedContentHeight + titleHeight + borderThickness
+      );
+
+      const widgetIdNum = parseInt(currentWidgetId);
+      if (isNaN(widgetIdNum) || widgetIdNum <= 0) {
+        console.warn("Invalid widget ID for height update:", currentWidgetId);
+        return;
+      }
+
+      const timeoutId = setTimeout(() => {
+        fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/updateWidgetHeight.php`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              widgetId: widgetIdNum,
+              actualHeight: calculatedHeight,
+            }),
+          }
+        )
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+          })
+          .then((data) => {
+            if (!data.success) {
+              console.warn("Height update skipped:", data.error);
+            } else {
+              console.log("Widget height updated successfully");
+            }
+          })
+          .catch((err) => {
+            console.warn("Height update failed:", err.message);
+          });
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    editMode,
+    currentWidgetId,
+    feeds.length,
+    feedItemHeight,
+    heightType,
+    heightPosts,
+    heightPixels,
+    border,
+    measurementDoneRef.current,
+  ]);
+
+  // Auto-scroll functionality (FIXED)
+  const startAutoScroll = () => {
+    if (!autoScroll || !scrollRef.current || !measurementDoneRef.current)
+      return;
+
+    console.log("Starting autoscroll with feedItemHeight:", feedItemHeight);
+
+    autoScrollIntervalRef.current = setInterval(() => {
+      if (!scrollRef.current) return;
+
+      const container = scrollRef.current;
+      const isCardLayout = layout === "card1" || layout === "card2";
+
+      if (isCardLayout) {
+        // For card layouts, scroll horizontally
+        const cardWidth = 280;
+        const gap = 16;
+        const scrollAmount = cardWidth + gap;
+        const maxScroll = container.scrollWidth - container.clientWidth;
+
+        if (container.scrollLeft >= maxScroll - 10) {
+          // Small buffer
+          container.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        }
+      } else {
+        // For other layouts, scroll vertically using measured height
+        const scrollAmount = feedItemHeight;
+        const maxScroll = container.scrollHeight - container.clientHeight;
+
+        console.log("Scroll info:", {
+          currentScrollTop: container.scrollTop,
+          scrollAmount,
+          maxScroll,
+          containerHeight: container.clientHeight,
+          scrollHeight: container.scrollHeight,
+        });
+
+        const isNearBottom = container.scrollTop >= maxScroll - 10; // Small buffer
+
+        if (isNearBottom) {
+          container.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          container.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        }
+      }
+    }, 3000); // Scroll every 3 seconds
+  };
+
+  const stopAutoScroll = () => {
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    stopAutoScroll();
+    if (
+      autoScroll &&
+      feeds.length > 0 &&
+      measurementDoneRef.current &&
+      feedItemHeight > 0
+    ) {
+      // Add a small delay to ensure DOM is fully rendered
+      const timeoutId = setTimeout(() => {
+        startAutoScroll();
+      }, 1000); // 1 second delay
+
+      return () => {
+        clearTimeout(timeoutId);
+        stopAutoScroll();
+      };
+    }
+
+    return () => stopAutoScroll();
+  }, [
+    autoScroll,
+    feeds.length,
+    layout,
+    feedItemHeight,
+    measurementDoneRef.current,
+  ]);
+
+  // Fetch feeds
+  useEffect(() => {
+    if (!folderId && !feedUrl) {
+      setFeeds([]);
+      return;
+    }
+
+    setIsLoading(true);
+
+    let url = "";
+    if (feedUrl) {
+      url = `${
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      }/getFeedsFromUrl.php?url=${encodeURIComponent(feedUrl)}`;
+    } else {
+      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/getFeeds.php?folder_id=${folderId}`;
+    }
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setFeeds(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch feeds:", err);
+        alert("Failed to fetch feeds. Please try again.");
+        setFeeds([]);
+        setIsLoading(false);
+      });
+  }, [folderId, feedUrl]);
+
   // Style for the main container
   const containerStyle = {};
 
@@ -104,6 +294,7 @@ export default function FeedDisplay({
     overflowY: "auto",
     backgroundColor: backgroundColor || "#ffffff",
   };
+
   // Style for individual feed items
   const feedStyle = {
     fontFamily: fontStyle,
@@ -113,11 +304,15 @@ export default function FeedDisplay({
     width: "100%",
     backgroundColor: backgroundColor || "#ffffff",
   };
+
   const wrapperStyle = {
     width: widthType === "pixels" ? `${widthPixels}px` : "100%",
     border: border ? `2px solid ${borderColor} ` : "none",
-    // margin: "0 auto",
+    borderRadius: border ? "4px" : "0",
+    overflow: "hidden",
+    boxSizing: "border-box",
   };
+
   const feedTitleStyle = {
     fontWeight: customSettings.feedTitleBold ? "bold" : "normal",
     color: customSettings.feedTitleFontColor || "#000000",
@@ -157,98 +352,6 @@ export default function FeedDisplay({
     feedTitleFontSize: 16,
     backgroundColor: "#ffffff",
   };
-
-  // Auto-scroll functionality
-  const startAutoScroll = () => {
-    if (!autoScroll || !scrollRef.current) return;
-
-    autoScrollIntervalRef.current = setInterval(() => {
-      if (!scrollRef.current) return;
-
-      const container = scrollRef.current;
-      const isCardLayout = layout === "card1" || layout === "card2";
-      if (isCardLayout) {
-        // For card layouts, scroll horizontally
-        const cardWidth = 280;
-        const gap = 16;
-        const scrollAmount = cardWidth + gap;
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        if (container.scrollLeft >= maxScroll) {
-          // Reset to beginning when reached the end
-          container.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          // Scroll to next card
-          container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-        }
-      } else {
-        // For other layouts, scroll vertically
-        const scrollAmount = feedItemHeight; // Scroll 100px at a time
-        const maxScroll = container.scrollHeight - container.clientHeight;
-
-        const isNearBottom =
-          container.scrollHeight -
-            container.scrollTop -
-            container.clientHeight <
-          5;
-
-        if (isNearBottom) {
-          container.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
-          container.scrollBy({ top: scrollAmount, behavior: "smooth" });
-        }
-      }
-    }, 3000); // Scroll every 3 seconds
-  };
-
-  const stopAutoScroll = () => {
-    if (autoScrollIntervalRef.current) {
-      clearInterval(autoScrollIntervalRef.current);
-      autoScrollIntervalRef.current = null;
-    }
-  };
-
-  // Start/stop autoscroll based on settings
-  useEffect(() => {
-    if (autoScroll && feeds.length > 0) {
-      startAutoScroll();
-    } else {
-      stopAutoScroll();
-    }
-
-    return () => stopAutoScroll();
-  }, [autoScroll, feeds.length, layout]);
-
-  // Fetch feeds
-  useEffect(() => {
-    if (!folderId && !feedUrl) {
-      setFeeds([]);
-      return;
-    }
-
-    setIsLoading(true);
-
-    let url = "";
-    if (feedUrl) {
-      url = `${
-        process.env.NEXT_PUBLIC_API_BASE_URL
-      }/getFeedsFromUrl.php?url=${encodeURIComponent(feedUrl)}`;
-    } else {
-      url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/getFeeds.php?folder_id=${folderId}`;
-    }
-
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setFeeds(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch feeds:", err);
-        alert("Failed to fetch feeds. Please try again.");
-        setFeeds([]);
-        setIsLoading(false);
-      });
-  }, [folderId, feedUrl]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -290,12 +393,31 @@ export default function FeedDisplay({
       alert("No widget ID provided for editing.");
       return;
     }
+    const feedContentHeight =
+      heightType === "posts" ? heightPosts * feedItemHeight : heightPixels;
+
+    const titleStyles = titleRef.current
+      ? getComputedStyle(titleRef.current)
+      : { marginTop: "0", marginBottom: "0" };
+
+    const titleMarginTop = parseInt(titleStyles.marginTop) || 0;
+    const titleMarginBottom = parseInt(titleStyles.marginBottom) || 0;
+    const fullTitleHeight =
+      (titleRef.current?.offsetHeight || 0) +
+      titleMarginTop +
+      titleMarginBottom;
+
+    const borderThickness = border ? 4 : 0;
+    const calculatedHeight = Math.ceil(
+      feedContentHeight + fullTitleHeight + borderThickness
+    );
 
     const payload = {
       widgetName: widgetName.trim(),
       layout,
       folderId: folderId || null,
       rssUrl: feedUrl || null,
+      actualHeight: calculatedHeight,
       customSettings: {
         fontStyle,
         textAlign,
@@ -456,6 +578,7 @@ export default function FeedDisplay({
         <div style={wrapperStyle}>
           {customSettings.useCustomTitle && (
             <div
+              ref={titleRef}
               className={Styles.feedTitle}
               style={{
                 backgroundColor: customSettings.titleBgColor,

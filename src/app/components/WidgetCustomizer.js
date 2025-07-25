@@ -20,11 +20,11 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
   const handleHeightTypeChange = (type) => {
     onSettingsChange({ ...customSettings, heightType: type });
   };
-  const handleNumberChange = (field, value, min = 1, max = 570) => {
+  const handleNumberChange = (field, value, min = 1, max = 597) => {
     const newValue = Math.max(min, Math.min(max, value));
     onSettingsChange({ ...customSettings, [field]: newValue });
   };
-  const incrementValue = (field, current, step = 1, max = 570) => {
+  const incrementValue = (field, current, step = 1, max = 597) => {
     handleNumberChange(field, current + step, 1, max);
   };
 

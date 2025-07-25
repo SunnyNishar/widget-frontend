@@ -229,6 +229,7 @@ export default function Navbar({ onCategorySelect }) {
             <button
               className={`${styles.profileMenuItem} ${styles.logoutItem}`}
               onClick={handleLogout}
+              title="Logout"
             >
               <span className={styles.profileMenuIcon}>
                 <LuLogOut />
