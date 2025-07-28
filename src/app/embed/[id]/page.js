@@ -1,89 +1,54 @@
 // app/embed/[id]/page.js
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import FeedDisplay from "../../components/FeedDisplay";
+import { useWidgetStore } from "../../../stores/useWidgetStore";
 
 export default function EmbedWidgetPage() {
   const { id } = useParams();
-  const [widgetData, setWidgetData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    loadWidgetForEdit,
+    customSettings,
+    feedUrl,
+    selectedFolderId,
+    selectedLayout,
+    view,
+    widgetName,
+    isLoading,
+  } = useWidgetStore();
 
   useEffect(() => {
-    if (!id) return;
-
-    fetch(`http://localhost/backend/getWidgetById.php?id=${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setWidgetData(data.widget);
-        } else {
-          console.error("Failed to load widget");
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading widget:", err);
-        setIsLoading(false);
-      });
-  }, [id]);
+    if (id) {
+      loadWidgetForEdit(id); // Load widget from backend into Zustand
+    }
+  }, [id, loadWidgetForEdit]);
 
   if (isLoading) return <p>Loading widget...</p>;
-  if (!widgetData) return <p>Widget not found.</p>;
-
-  const hasBorder =
-    widgetData.border === true ||
-    widgetData.border === 1 ||
-    widgetData.border === "1";
+  if (!feedUrl && !selectedFolderId) return <p>Widget not found.</p>;
 
   return (
     <div
       style={{
         background: "#fff",
         width:
-          widgetData.widthType === "pixels"
-            ? `${widgetData.widthPixels || 350}px`
-            : "100%", // Let FeedDisplay handle the width
-        height: "100%", // Let FeedDisplay handle the height
+          customSettings.widthType === "pixels"
+            ? `${customSettings.widthPixels || 350}px`
+            : "100%",
+        height: "100%",
         padding: 0,
         margin: 0,
         overflow: "hidden",
-        // Remove border from here - let FeedDisplay handle it
       }}
     >
       <FeedDisplay
-        folderId={widgetData.folder_id}
-        view={widgetData.layout.startsWith("grid") ? "grid" : widgetData.layout}
-        layout={widgetData.layout}
-        customSettings={{
-          fontStyle: widgetData.fontStyle || "Arial",
-          textAlign: widgetData.textAlign || "left",
-          border: hasBorder,
-          borderColor: widgetData.borderColor || "#000000",
-          widthType: widgetData.widthType || "responsive",
-          widthPixels: widgetData.widthPixels || 350,
-          heightType: widgetData.heightType || "pixels",
-          heightPixels: widgetData.heightPixels || 350,
-          heightPosts: widgetData.heightPosts || 3,
-          autoScroll: widgetData.autoScroll || false,
-          useCustomTitle: widgetData.useCustomTitle || false,
-          mainTitle: widgetData.mainTitle || "",
-          titleFontSize: widgetData.titleFontSize || 16,
-          titleBold: widgetData.titleBold ?? false,
-          titleFontColor: widgetData.titleFontColor || "#0080ff",
-          titleBgColor: widgetData.titleBgColor || "#ffffff",
-          useCustomContent: widgetData.useCustomContent || false,
-          showFeedTitle: widgetData.showFeedTitle ?? true,
-          showFeedDescription: widgetData.showFeedDescription ?? true,
-          showFeedDate: widgetData.showFeedDate ?? true,
-          feedTitleBold: widgetData.feedTitleBold ?? false,
-          feedDescriptionBold: widgetData.feedDescriptionBold ?? false,
-          feedTitleFontColor: widgetData.feedTitleFontColor || "#6d8cd1",
-          feedTitleFontSize: widgetData.feedTitleFontSize || 16,
-          backgroundColor: widgetData.backgroundColor || "#ffffff",
-        }}
-        widgetName={widgetData.widget_name}
-        feedUrl={widgetData.rss_url}
+        folderId={selectedFolderId}
+        view={view}
+        layout={selectedLayout}
+        customSettings={customSettings}
+        widgetName={widgetName}
+        feedUrl={feedUrl}
         editMode={false}
         embedMode={true}
         currentWidgetId={id}

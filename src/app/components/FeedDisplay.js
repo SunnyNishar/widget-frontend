@@ -1,20 +1,25 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import Styles from "./feeddisplay.module.css";
+import { useWidgetStore } from "@/stores/useWidgetStore";
 import { IoIosSend } from "react-icons/io";
+import Styles from "./feeddisplay.module.css";
 
-export default function FeedDisplay({
-  folderId,
-  feedUrl,
-  layout,
-  customSettings,
-  setCustomSettings,
-  widgetName,
-  setWidgetName,
-  editMode = false,
-  currentWidgetId = null,
-  embedMode = false,
-}) {
+export default function FeedDisplay({ embedMode = false }) {
+  // Get state and actions from Zustand store
+  const {
+    // Widget state
+    selectedFolderId: folderId,
+    feedUrl,
+    selectedLayout: layout,
+    customSettings,
+    setCustomSettings,
+    widgetName,
+    setWidgetName,
+    editMode,
+    currentWidgetId,
+  } = useWidgetStore();
+
+  // Destructure customSettings
   const {
     fontStyle,
     textAlign,
@@ -43,11 +48,14 @@ export default function FeedDisplay({
     backgroundColor,
   } = customSettings;
 
+  // Local state for this component
   const [feeds, setFeeds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [feedItemHeight, setFeedItemHeight] = useState(120);
+
+  // Refs
   const scrollRef = useRef(null);
   const autoScrollIntervalRef = useRef(null);
-  const [feedItemHeight, setFeedItemHeight] = useState(120); // Default fallback
   const feedItemRef = useRef(null);
   const measurementDoneRef = useRef(false);
   const titleRef = useRef(null);
@@ -162,7 +170,7 @@ export default function FeedDisplay({
     measurementDoneRef.current,
   ]);
 
-  // Auto-scroll functionality (FIXED)
+  // Auto-scroll functionality
   const startAutoScroll = () => {
     if (!autoScroll || !scrollRef.current || !measurementDoneRef.current)
       return;
@@ -183,7 +191,6 @@ export default function FeedDisplay({
         const maxScroll = container.scrollWidth - container.clientWidth;
 
         if (container.scrollLeft >= maxScroll - 10) {
-          // Small buffer
           container.scrollTo({ left: 0, behavior: "smooth" });
         } else {
           container.scrollBy({ left: scrollAmount, behavior: "smooth" });
@@ -193,15 +200,7 @@ export default function FeedDisplay({
         const scrollAmount = feedItemHeight;
         const maxScroll = container.scrollHeight - container.clientHeight;
 
-        console.log("Scroll info:", {
-          currentScrollTop: container.scrollTop,
-          scrollAmount,
-          maxScroll,
-          containerHeight: container.clientHeight,
-          scrollHeight: container.scrollHeight,
-        });
-
-        const isNearBottom = container.scrollTop >= maxScroll - 10; // Small buffer
+        const isNearBottom = container.scrollTop >= maxScroll - 10;
 
         if (isNearBottom) {
           container.scrollTo({ top: 0, behavior: "smooth" });
@@ -209,7 +208,7 @@ export default function FeedDisplay({
           container.scrollBy({ top: scrollAmount, behavior: "smooth" });
         }
       }
-    }, 3000); // Scroll every 3 seconds
+    }, 3000);
   };
 
   const stopAutoScroll = () => {
@@ -227,10 +226,9 @@ export default function FeedDisplay({
       measurementDoneRef.current &&
       feedItemHeight > 0
     ) {
-      // Add a small delay to ensure DOM is fully rendered
       const timeoutId = setTimeout(() => {
         startAutoScroll();
-      }, 1000); // 1 second delay
+      }, 1000);
 
       return () => {
         clearTimeout(timeoutId);
@@ -279,10 +277,9 @@ export default function FeedDisplay({
       });
   }, [folderId, feedUrl]);
 
-  // Style for the main container
+  // Styles
   const containerStyle = {};
 
-  // Style for the feeddata container (where height should be applied)
   const feedDataStyle = {
     height: getFeedDataHeight(),
     maxHeight:
@@ -295,7 +292,6 @@ export default function FeedDisplay({
     backgroundColor: backgroundColor || "#ffffff",
   };
 
-  // Style for individual feed items
   const feedStyle = {
     fontFamily: fontStyle,
     textAlign: textAlign,
@@ -308,21 +304,19 @@ export default function FeedDisplay({
   const wrapperStyle = {
     width: widthType === "pixels" ? `${widthPixels}px` : "100%",
     border: border ? `2px solid ${borderColor} ` : "none",
-    borderRadius: border ? "4px" : "0",
+    // borderRadius: border ? "4px" : "0",
     overflow: "hidden",
     boxSizing: "border-box",
   };
 
   const feedTitleStyle = {
-    fontWeight: customSettings.feedTitleBold ? "bold" : "normal",
-    color: customSettings.feedTitleFontColor || "#000000",
-    fontSize: customSettings.feedTitleFontSize
-      ? `${customSettings.feedTitleFontSize}px`
-      : "16px",
+    fontWeight: feedTitleBold ? "bold" : "normal",
+    color: feedTitleFontColor || "#000000",
+    fontSize: feedTitleFontSize ? `${feedTitleFontSize}px` : "16px",
   };
 
   const feedDescriptionStyle = {
-    fontWeight: customSettings.feedDescriptionBold ? "bold" : "normal",
+    fontWeight: feedDescriptionBold ? "bold" : "normal",
   };
 
   const defaultSettings = {
@@ -393,6 +387,7 @@ export default function FeedDisplay({
       alert("No widget ID provided for editing.");
       return;
     }
+
     const feedContentHeight =
       heightType === "posts" ? heightPosts * feedItemHeight : heightPixels;
 
@@ -576,20 +571,20 @@ export default function FeedDisplay({
           </>
         )}
         <div style={wrapperStyle}>
-          {customSettings.useCustomTitle && (
+          {useCustomTitle && (
             <div
               ref={titleRef}
               className={Styles.feedTitle}
               style={{
-                backgroundColor: customSettings.titleBgColor,
-                color: customSettings.titleFontColor,
-                fontWeight: customSettings.titleBold ? "bold" : "normal",
-                fontSize: `${customSettings.titleFontSize}px`,
+                backgroundColor: titleBgColor,
+                color: titleFontColor,
+                fontWeight: titleBold ? "bold" : "normal",
+                fontSize: `${titleFontSize}px`,
                 textAlign: "left",
                 borderBottom: "1px solid #989191e4",
               }}
             >
-              {customSettings.mainTitle || "Feed Title"}
+              {mainTitle || "Feed Title"}
             </div>
           )}
           {/* Apply height style to the feeddata container */}
@@ -623,7 +618,7 @@ export default function FeedDisplay({
                     />
                   )}
                   <div className={Styles.feedText}>
-                    {customSettings.showFeedTitle && (
+                    {showFeedTitle && (
                       <h4 style={feedTitleStyle}>
                         <a
                           href={feed.url}
@@ -635,11 +630,11 @@ export default function FeedDisplay({
                       </h4>
                     )}
 
-                    {customSettings.showFeedDescription && (
+                    {showFeedDescription && (
                       <p style={feedDescriptionStyle}>{feed.description}</p>
                     )}
 
-                    {customSettings.showFeedDate && <small>{feed.date}</small>}
+                    {showFeedDate && <small>{feed.date}</small>}
                   </div>
                 </div>
               ))}

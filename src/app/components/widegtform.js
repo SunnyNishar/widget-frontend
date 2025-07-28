@@ -1,9 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import styles from "./widgetform.module.css";
+import React, { useEffect } from "react";
 import Image from "next/image";
+import { useWidgetStore } from "@/stores/useWidgetStore";
 import Buttons from "./buttons";
-import { useEffect } from "react";
+import WidgetCustomizer from "./WidgetCustomizer";
+import styles from "./widgetform.module.css";
+
+// Import preview images
 import preview1 from "@/assets/card1.webp";
 import preview2 from "@/assets/card2.webp";
 import preview3 from "@/assets/card3.webp";
@@ -11,36 +14,36 @@ import preview4 from "@/assets/card4.webp";
 import preview5 from "@/assets/card5.webp";
 import preview6 from "@/assets/card6.webp";
 import preview7 from "@/assets/card7.webp";
-import WidgetCustomizer from "./WidgetCustomizer";
 
-export default function WidgetForm({
-  selectedFolderId,
-  setSelectedFolderId,
-  view,
-  setView,
-  selectedLayout,
-  setSelectedLayout,
-  onSettingsChange,
-  customSettings,
-  setFeedUrl,
-  tempFeedUrl,
-  setTempFeedUrl,
-}) {
-  const [folders, setFolders] = useState([]);
+export default function WidgetForm() {
+  // Get state and actions from Zustand store
+  const {
+    // State
+    folders,
+    selectedFolderId,
+    tempFeedUrl,
+    view,
+    selectedLayout,
+    customSettings,
 
-  // const [selectedlayout, setSelectedLayout] = useState("");
-  // const [selectedFolderId, setSelectedFolderId] = useState('');
-  // const [selectedFeedUrl, setSelectedFeedUrl] = useState('');
+    // Actions
+    setFolders,
+    selectFolder,
+    enterFeedUrl,
+    loadPreview,
+    setView,
+    setSelectedLayout,
+    setCustomSettings,
+  } = useWidgetStore();
 
-  // const [view, setView] = useState("grid");
-  // const [selectedPreview, setSelectedPreview] = useState(null);
-
+  // Fetch folders on component mount
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/getFolders.php`)
       .then((res) => res.json())
       .then((data) => setFolders(data))
       .catch((err) => console.error("Failed to fetch folders:", err));
-  }, []);
+  }, [setFolders]);
+
   const previewMap = {
     list: [preview3],
     matrix: [preview4, preview5],
@@ -78,37 +81,28 @@ export default function WidgetForm({
       <div className={styles.heading}>
         <h1>Feedspot widgets</h1>
       </div>
+
       <div className={styles.urlInput}>
         <p>Enter Feed URL</p>
         <input
           type="text"
           value={tempFeedUrl}
-          onChange={(e) => {
-            setTempFeedUrl(e.target.value);
-            setSelectedFolderId(""); // clear folder selection if manually entering URL
-          }}
+          onChange={(e) => enterFeedUrl(e.target.value)}
           placeholder="https://example.com/rss"
         />
         <button
           type="submit"
           className={styles.loadButton}
-          onClick={() => {
-            if (tempFeedUrl.trim()) {
-              setFeedUrl(tempFeedUrl.trim());
-            }
-          }}
+          onClick={loadPreview}
         >
           Load Preview
         </button>
+
         <br />
         <p>Or Select Feedspot Folder URL</p>
         <select
           value={selectedFolderId}
-          onChange={(e) => {
-            setSelectedFolderId(e.target.value);
-            setFeedUrl(""); // clear feed URL if folder is selected
-            setTempFeedUrl(""); // clear temp feed URL
-          }}
+          onChange={(e) => selectFolder(e.target.value)}
         >
           <option value="">-- Select a Folder --</option>
           {folders.map((folder) => (
@@ -125,8 +119,9 @@ export default function WidgetForm({
       </div>
 
       <div className={styles.preview}>{renderPreviews()}</div>
+
       <WidgetCustomizer
-        onSettingsChange={onSettingsChange}
+        onSettingsChange={setCustomSettings}
         customSettings={customSettings}
       />
     </div>

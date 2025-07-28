@@ -330,7 +330,7 @@ export default function MyWidgetsPage() {
                   }" style="width: ${
                     selectedWidget.widthType === "pixels"
                       ? `${selectedWidget.widthPixels}px`
-                      : "570px"
+                      : "100%"
                   }; height: ${
                     selectedWidget.actualHeight || 400
                   }px; border: none;" loading="lazy"></iframe>`}
@@ -344,7 +344,7 @@ export default function MyWidgetsPage() {
                       }" style="width: ${
                         selectedWidget.widthType === "pixels"
                           ? `${selectedWidget.widthPixels}px`
-                          : "570px"
+                          : "100%"
                       };height: ${
                         selectedWidget.actualHeight || 400
                       }px; border: none;" loading="lazy"></iframe>`
