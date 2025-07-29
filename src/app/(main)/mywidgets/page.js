@@ -1,136 +1,133 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import Styles from "./mywidgets.module.css";
 import Modal from "react-modal";
 import Link from "next/link";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useWidgetManagementStore } from "@/stores/useWidgetManagementStore";
+import { useWidgetStore } from "@/stores/useWidgetStore";
 import { isTokenExpired } from "../../../utils/auth";
+import Styles from "./mywidgets.module.css";
 
 export default function MyWidgetsPage() {
-  const [widgets, setWidgets] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedWidget, setSelectedWidget] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  // const [authenticated, setAuthenticated] = useState(false);
   const sessionHandled = useRef(false);
-  const [editingWidgetId, setEditingWidgetId] = useState(null);
-  const [editedName, setEditedName] = useState("");
 
+  // Auth store
+  const { isAuthenticated, checkAuth, logout } = useAuthStore();
+  const handleCreateNewWidget = () => {
+    const { resetWidget } = useWidgetStore.getState();
+    resetWidget();
+  };
+  // Widget management store
+  const {
+    // State
+    widgets,
+    isLoading,
+    selectedWidget,
+    isModalOpen,
+    editingWidgetId,
+    editedName,
+
+    // Actions
+    fetchWidgets,
+    deleteWidget,
+    updateWidgetName,
+    startEditingName,
+    cancelEditingName,
+    showEmbedCode,
+    closeEmbedCode,
+    copyEmbedCode,
+    setEditedName,
+    reset: resetWidgetStore,
+  } = useWidgetManagementStore();
+
+  // Initialize and check authentication
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (sessionHandled.current) return;
+
+    const token = localStorage.getItem("token");
+
     if (!token || isTokenExpired(token)) {
       sessionHandled.current = true;
-      localStorage.removeItem("token");
+      logout();
       alert("Session Token expired. Please log in again.");
-      router.push("/login");
-      return; // 🚨 prevent further code
-    }
-    // setAuthenticated(true);
-
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/getWidgets.php`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success === false) {
-          sessionHandled.current = true;
-          console.error("Auth failed:", data.error);
-          router.push("/login"); // invalid token
-        } else {
-          setWidgets(data || []);
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch widgets:", err);
-        setIsLoading(false);
-      });
-  }, []);
-
-  const handleDelete = (id) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Not logged in.");
       router.push("/login");
       return;
     }
-    if (!window.confirm("Are you sure you want to delete this widget?")) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteWidget.php`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setWidgets((prev) => prev.filter((w) => w.id !== id));
+    const isAuth = checkAuth();
+    if (!isAuth) {
+      sessionHandled.current = true;
+      router.push("/login");
+      return;
+    }
+
+    // Fetch widgets
+    fetchWidgets().then((result) => {
+      if (!result.success) {
+        if (
+          result.error.includes("Auth failed") ||
+          result.error.includes("token")
+        ) {
+          sessionHandled.current = true;
+          logout();
+          router.push("/login");
         } else {
-          alert("Failed to delete widget.");
+          console.error("Failed to fetch widgets:", result.error);
         }
-      })
-      .catch((err) => {
-        alert("An error occurred while deleting.");
-        console.error(err);
-      });
+      }
+    });
+
+    return () => {
+      // Cleanup when component unmounts
+      resetWidgetStore();
+    };
+  }, [checkAuth, fetchWidgets, logout, router, resetWidgetStore]);
+
+  // Handle widget deletion with confirmation
+  const handleDelete = async (widgetId) => {
+    if (!window.confirm("Are you sure you want to delete this widget?")) {
+      return;
+    }
+
+    const result = await deleteWidget(widgetId);
+
+    if (result.success) {
+      // Widget already removed from state by the store action
+    } else {
+      alert(result.error || "Failed to delete widget.");
+    }
   };
 
+  // Handle widget editing (navigate to edit page)
   const handleEdit = (widgetId) => {
     router.push(`/?edit=${widgetId}`);
   };
-  const handleSaveWidgetName = (widgetId) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Not logged in.");
-      router.push("/login");
-      return;
+
+  // Handle save widget name
+  const handleSaveWidgetName = async (widgetId) => {
+    const result = await updateWidgetName(widgetId, editedName);
+
+    if (!result.success) {
+      alert(result.error || "Failed to update widget name.");
     }
-
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/updateWidgetName.php`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        id: widgetId,
-        widget_name: editedName.trim(),
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setWidgets((prev) =>
-            prev.map((w) =>
-              w.id === widgetId ? { ...w, widget_name: editedName.trim() } : w
-            )
-          );
-          setEditingWidgetId(null);
-        } else {
-          alert("Failed to update widget name.");
-        }
-      })
-      .catch((err) => {
-        console.error("Error updating widget name:", err);
-        alert("An error occurred.");
-      });
+    // Success state is handled by the store
   };
 
-  const handleShowEmbedCode = (widget) => {
-    setSelectedWidget(widget);
-    setIsModalOpen(true);
+  // Handle embed code copying
+  const handleCopyEmbedCode = async (widget) => {
+    const result = await copyEmbedCode(widget);
+
+    if (result.success) {
+      alert("Embed code copied to clipboard!");
+    } else {
+      alert(result.error || "Failed to copy embed code.");
+    }
   };
 
+  // Animation variants
   const buttonVariants = {
     hover: { scale: 1.05, transition: { duration: 0.2 } },
     tap: { scale: 0.95, transition: { duration: 0.1 } },
@@ -141,19 +138,23 @@ export default function MyWidgetsPage() {
     visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.3 } },
     exit: { opacity: 0, scale: 0.8, y: -50, transition: { duration: 0.2 } },
   };
-  // if (!authenticated) return null;
+
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <motion.div
       className={Styles.wrapper}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      {/* <Sidebar /> */}
       <div className={Styles.main}>
         <h1 className={Styles.heading}>My Widgets</h1>
 
         <div className={Styles.topButtons}>
-          <Link href="/">
+          <Link href="/" onClick={handleCreateNewWidget}>
             <motion.button
               className={Styles.createBtn}
               variants={buttonVariants}
@@ -205,12 +206,15 @@ export default function MyWidgetsPage() {
                             type="text"
                             value={editedName}
                             onChange={(e) => setEditedName(e.target.value)}
-                            // onBlur={() => handleSave(widget.id)}
                             onKeyDown={(e) => {
-                              if (e.key === "Enter")
+                              if (e.key === "Enter") {
                                 handleSaveWidgetName(widget.id);
+                              } else if (e.key === "Escape") {
+                                cancelEditingName();
+                              }
                             }}
                             className={Styles.inlineInput}
+                            autoFocus
                           />
                           <button
                             onClick={() => handleSaveWidgetName(widget.id)}
@@ -220,7 +224,7 @@ export default function MyWidgetsPage() {
                             ✅
                           </button>
                           <button
-                            onClick={() => setEditingWidgetId(null)}
+                            onClick={cancelEditingName}
                             className={Styles.inlineCancelBtn}
                             title="Cancel"
                           >
@@ -228,21 +232,18 @@ export default function MyWidgetsPage() {
                           </button>
                         </>
                       ) : (
-                        <>
-                          <div className={Styles.nameCell}>
-                            <span>{widget.widget_name}</span>
-                            <button
-                              onClick={() => {
-                                setEditingWidgetId(widget.id);
-                                setEditedName(widget.widget_name);
-                              }}
-                              className={Styles.inlineEditBtn}
-                              title="Edit name"
-                            >
-                              ✏️
-                            </button>
-                          </div>
-                        </>
+                        <div className={Styles.nameCell}>
+                          <span>{widget.widget_name}</span>
+                          <button
+                            onClick={() =>
+                              startEditingName(widget.id, widget.widget_name)
+                            }
+                            className={Styles.inlineEditBtn}
+                            title="Edit name"
+                          >
+                            ✏️
+                          </button>
+                        </div>
                       )}
                     </td>
 
@@ -264,6 +265,7 @@ export default function MyWidgetsPage() {
                         "N/A"
                       )}
                     </td>
+
                     <td>
                       <motion.button
                         onClick={() => handleDelete(widget.id)}
@@ -275,21 +277,25 @@ export default function MyWidgetsPage() {
                       >
                         Delete
                       </motion.button>
+
                       <motion.button
-                        onClick={() => handleShowEmbedCode(widget)}
+                        onClick={() => showEmbedCode(widget)}
                         className={Styles.actionBtn}
                         variants={buttonVariants}
                         whileHover="hover"
                         whileTap="tap"
+                        title="Get Embed Code"
                       >
                         Embed Code
                       </motion.button>
+
                       <motion.button
                         onClick={() => handleEdit(widget.id)}
                         className={Styles.actionBtn}
                         variants={buttonVariants}
                         whileHover="hover"
                         whileTap="tap"
+                        title="Edit Widget"
                       >
                         Edit Widget
                       </motion.button>
@@ -301,12 +307,13 @@ export default function MyWidgetsPage() {
           </table>
         )}
 
+        {/* Embed Code Modal */}
         <AnimatePresence>
           {isModalOpen && selectedWidget && (
             <Modal
               ariaHideApp={false}
               isOpen={isModalOpen}
-              onRequestClose={() => setIsModalOpen(false)}
+              onRequestClose={closeEmbedCode}
               contentLabel="Embed Code Modal"
               className={Styles.modalContent}
               overlayClassName={Styles.modalOverlay}
@@ -323,6 +330,7 @@ export default function MyWidgetsPage() {
                   This is the embed code for widget:{" "}
                   {selectedWidget.widget_name}
                 </p>
+
                 <textarea
                   readOnly
                   value={`<iframe src="http://localhost:3000/embed/${
@@ -334,38 +342,38 @@ export default function MyWidgetsPage() {
                   }; height: ${
                     selectedWidget.actualHeight || 400
                   }px; border: none;" loading="lazy"></iframe>`}
-                  style={{ width: "100%", height: "100px", marginTop: "10px" }}
+                  style={{
+                    width: "100%",
+                    height: "120px",
+                    marginTop: "10px",
+                    fontFamily: "monospace",
+                    fontSize: "12px",
+                  }}
                 />
-                <motion.button
-                  onClick={() =>
-                    navigator.clipboard.writeText(
-                      `<iframe src="http://localhost:3000/embed/${
-                        selectedWidget.id
-                      }" style="width: ${
-                        selectedWidget.widthType === "pixels"
-                          ? `${selectedWidget.widthPixels}px`
-                          : "100%"
-                      };height: ${
-                        selectedWidget.actualHeight || 400
-                      }px; border: none;" loading="lazy"></iframe>`
-                    )
-                  }
-                  className={Styles.actionBtn}
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+
+                <div
+                  style={{ marginTop: "15px", display: "flex", gap: "10px" }}
                 >
-                  Copy Code
-                </motion.button>
-                <motion.button
-                  onClick={() => setIsModalOpen(false)}
-                  className={Styles.actionBtn}
-                  variants={buttonVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                >
-                  Close
-                </motion.button>
+                  <motion.button
+                    onClick={() => handleCopyEmbedCode(selectedWidget)}
+                    className={Styles.actionBtn}
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    Copy Code
+                  </motion.button>
+
+                  <motion.button
+                    onClick={closeEmbedCode}
+                    className={Styles.actionBtn}
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    Close
+                  </motion.button>
+                </div>
               </motion.div>
             </Modal>
           )}

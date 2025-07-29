@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import FeedDisplay from "../components/FeedDisplay";
 import WidgetForm from "../components/widegtform";
 import PageHeader from "../components/pageHeader";
+import Footer from "../components/footer";
 import { useWidgetStore, useAuthStore } from "@/stores";
 import styles from "./page.module.css";
 
@@ -75,7 +76,7 @@ export default function Home() {
         </div>
       </div>
       <div className={styles.footer}>
-        <h1>Widgets Layouts and Templates</h1>
+        <Footer />
       </div>
     </main>
   );

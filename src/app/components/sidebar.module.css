@@ -1,5 +1,5 @@
 .sidebar {
-  min-width: 250px;
+  width: 250px;
   background: #333;
   color: white;
   padding: 20px;
@@ -10,6 +10,11 @@
   top: 0;
   left: 0;
   z-index: 1000;
+  transition: width 0.5s ease;
+}
+
+.collapsed {
+  width: 60px;
 }
 
 .sidebar h2 {
@@ -52,7 +57,6 @@
 .active {
   font-weight: bold;
   color: #70a3d6;
-
 }
 
 .logoutButton {
@@ -68,21 +72,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  
 }
-.userInfo {
-  margin-top: 300px;
-  padding: 10px;
-  color: white;
-  transition: 0.3s ease-in-out;
-  display: flex;
-  justify-content: center;
-}
-
 
 .logoutButton:hover:not(:disabled) {
   background-color: #fefcfc;
-  color: rgb(0, 0, 0);
+  color: black;
 }
 
 .logoutButton:disabled {
@@ -96,4 +90,66 @@
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top: 2px solid white;
   border-radius: 50%;
+}
+
+.menuItemContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.5s ease;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.userInfo {
+  margin-top: 300px;
+  padding: 10px;
+  color: white;
+  transition: 0.5s ease-in-out;
+  display: flex;
+  justify-content: center;
+}
+
+.collapsed .menuItemContent span:not(.icon),
+.collapsed .sidebar h2,
+.collapsed .logoutButton,
+.collapsed .userInfo {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.collapseButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* margin-bottom: 20px; */
+}
+
+.brand {
+  font-size: 22px;
+  margin: 0;
+}
+
+.collapsed .brand {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
 }

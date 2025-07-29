@@ -271,6 +271,20 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
             ))}
           </div>
         </div>
+        {/* Feed Content Background Color */}
+        <div className={styles.formGroup}>
+          <label>Background Color</label>
+          <input
+            type="color"
+            value={customSettings.backgroundColor || "#ffffffff"}
+            onChange={(e) =>
+              onSettingsChange({
+                ...customSettings,
+                backgroundColor: e.target.value,
+              })
+            }
+          />
+        </div>
 
         <div className={styles.formGroup}>
           <label>
@@ -553,21 +567,6 @@ const WidgetCustomizer = ({ customSettings, onSettingsChange }) => {
                         onSettingsChange({
                           ...customSettings,
                           feedTitleFontColor: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  {/* Feed Content Background Color */}
-                  <div className={styles.formGroup}>
-                    <label>Background</label>
-                    <input
-                      type="color"
-                      value={customSettings.backgroundColor || "#ffffffff"}
-                      onChange={(e) =>
-                        onSettingsChange({
-                          ...customSettings,
-                          backgroundColor: e.target.value,
                         })
                       }
                     />

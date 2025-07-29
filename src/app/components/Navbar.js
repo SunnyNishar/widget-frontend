@@ -7,8 +7,10 @@ import { SlUser } from "react-icons/sl";
 import { jwtDecode } from "jwt-decode";
 import { AiOutlineSearch } from "react-icons/ai";
 import { LuLogOut } from "react-icons/lu";
+import { useWidgetStore } from "@/stores/useWidgetStore";
 
 export default function Navbar({ onCategorySelect }) {
+  const { enterFeedUrl, loadPreview } = useWidgetStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
@@ -80,12 +82,11 @@ export default function Navbar({ onCategorySelect }) {
   const handleCategoryClick = (category) => {
     setSearchQuery(category.title);
     setShowDropdown(false);
-
-    // If onCategorySelect prop is provided, use it
+    enterFeedUrl(category.rss_url);
+    loadPreview();
     if (onCategorySelect) {
       onCategorySelect(category);
     } else {
-      // Otherwise, navigate to home page with feed URL as query parameter
       router.push(`/?feed=${encodeURIComponent(category.rss_url)}`);
     }
   };
