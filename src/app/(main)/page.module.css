@@ -74,18 +74,6 @@
   border-top: 1px solid #e9e9e9;
 }
 
-.footerInner {
-  max-width: 1200px;
-  width: 100%;
-  text-align: center;
-}
-
-.footerTitle {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
 .widgetLayouts {
   display: flex;
   justify-content: space-between;

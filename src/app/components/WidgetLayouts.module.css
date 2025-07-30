@@ -1,0 +1,164 @@
+.widgetLayoutsSection {
+  width: 100%;
+  padding: 60px 20px 40px;
+  background: #f8f9fa;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.scrollContainer {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.widgetGrid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  /* padding: 20px 0; */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  align-items: center; /* Center images vertically */
+  cursor: default; /* Show grab cursor for drag scrolling */
+}
+
+.widgetGrid:active {
+  cursor: default; /* Show grabbing cursor when dragging */
+}
+
+.widgetGrid::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.widgetCard {
+  flex-shrink: 0;
+  /* border-radius: 12px; */
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.widgetCard img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: 400px; /* Reasonable max height to prevent overly large images */
+  user-select: none; /* Prevent text/image selection */
+  -webkit-user-drag: none; /* Prevent image dragging in webkit browsers */
+  -khtml-user-drag: none; /* Prevent image dragging in khtml browsers */
+  -moz-user-drag: none; /* Prevent image dragging in mozilla browsers */
+  -o-user-drag: none; /* Prevent image dragging in opera browsers */
+}
+
+.scrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  color: #666;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.scrollButton:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scrollButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.scrollLeft {
+  left: -25px;
+}
+
+.scrollRight {
+  right: -25px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .widgetLayoutsSection {
+    padding: 40px 15px 30px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  .widgetCard img {
+    max-height: 300px;
+  }
+
+  .scrollButton {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .scrollLeft {
+    left: -20px;
+  }
+
+  .scrollRight {
+    right: -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .widgetLayoutsSection {
+    padding: 30px 10px 20px;
+  }
+
+  .header h2 {
+    font-size: 1.8rem;
+  }
+
+  .widgetCard img {
+    max-height: 250px;
+  }
+
+  .scrollButton {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+
+  .scrollLeft {
+    left: -15px;
+  }
+
+  .scrollRight {
+    right: -15px;
+  }
+}

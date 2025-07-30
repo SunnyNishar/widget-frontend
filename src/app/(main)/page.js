@@ -5,6 +5,7 @@ import FeedDisplay from "../components/FeedDisplay";
 import WidgetForm from "../components/widegtform";
 import PageHeader from "../components/pageHeader";
 import Footer from "../components/footer";
+import WidgetLayouts from "../components/WidgetLayouts";
 import { useWidgetStore, useAuthStore } from "@/stores";
 import styles from "./page.module.css";
 
@@ -23,7 +24,6 @@ export default function Home() {
 
   const {
     // Auth State & Actions
-    isAuthenticated,
     checkAuth,
   } = useAuthStore();
 
@@ -75,6 +75,7 @@ export default function Home() {
           <FeedDisplay />
         </div>
       </div>
+      {/* <WidgetLayouts /> */}
       <div className={styles.footer}>
         <Footer />
       </div>
